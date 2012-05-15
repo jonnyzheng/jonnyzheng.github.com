@@ -20,8 +20,6 @@ OK,  反正可以用rebase,  于是用TortoiseGit的rebase功能把他们在ma
 
 
 {% codeblock %}
-
-
 0000000000000000000000000000000000000000 f7f3b11f66b709dcd93e1c15825270dce90adc5e jonny <jonny.zheng@lexisnexis.com> 1314676889 +0800	branch: Created from HEAD
 
 f7f3b11f66b709dcd93e1c15825270dce90adc5e 74173c185de3ce5ee846bc7e0326481276372071 jonny <jonny.zheng@lexisnexis.com> 1314682422 +0800	commit (amend): init
@@ -42,31 +40,22 @@ c91bb413528815321b10929d9cd26480de64f3bf 3006dced1c8d39108483927bd5cc1e9ee4d1ec0
 
 ada2680266b192a0ebf8d4a43ca8ca4812aadc78 a259bcff43cc726be011efbbeb5975ffafb87ee5 jonny <jonny.zheng@lexisnexis.com> 1314788871 +0800	commit: rebase
 
-[/cc]
+{% endcodeblock %}
 
 最后一行是rebase的操作，我只要新建个分支在里面找回前一行commit的代码就可以了。
 
-[cc lang="bash"]
 
+{% codeblock %}
 git checkout -b my_recovery 0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78
-
-[/cc]
-
- 
+{% endcodeblock %}
 
 方法2（这个更简单）
-
-[cc]
+{% codeblock %}
 git reflog
 # Suppose the old commit was HEAD@{5} in the ref log
 git reset --hard HEAD@{5}
-
 {% endcodeblock %}
 
-
- 
-
- 
 
 终于找回了丢失的代码，可以不用重写一遍了，而且学到了很有用的解决方法，看来犯错也不都是坏事。
 

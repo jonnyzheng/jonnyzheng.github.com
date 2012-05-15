@@ -12,6 +12,8 @@ type: post
 ---
 新版本的mysql 使用了CMAKE作为编译工具，不论这种方法的优缺点，先上编译参数：
 
+
+{% codeblock %}
 cmake . \
 -DCMAKE_BUILD_TYPE:STRING=Release \
 -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/mysql \
@@ -30,9 +32,9 @@ cmake . \
 -DWITH_UNIT_TESTS:BOOL=OFF \
 -DWITH_ZLIB:STRING=bundled \
 -LH
+{% endcodeblock %}
 
 
+具体可参考 [http://forge.mysql.com/wiki/CMake](http://forge.mysql.com/wiki/CMake)
 
-具体可参考 http://forge.mysql.com/wiki/CMake
-
-CMake和 configure的命令行参数比较 http://forge.mysql.com/wiki/CMake#Introduction
+CMake和configure的命令行参数比较 [http://forge.mysql.com/wiki/CMake#Introduction](http://forge.mysql.com/wiki/CMake#Introduction)
