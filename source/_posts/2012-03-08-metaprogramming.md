@@ -42,3 +42,17 @@ instance_eval即可以用class调用也可以用object调用，不同点在于�
 ### Binding Objects
 
 用到 `eval` 方法时同时有另外一个方法也很有帮助，就是 binding, 他可以让你在不同的作用域之间调用需要的变量
+
+``` ruby
+class MyClass
+  def my_method
+    @x = 1
+    binding
+  end
+end
+
+
+b = MyClass.new.my_method
+
+eval "puts @x", b
+```
