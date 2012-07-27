@@ -1,137 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>Jonny Zheng</title>
-  <meta name="author" content="Jonny">
-
-  
-  <meta name="description" content="转自外刊it评论 泛型是Java SE 5.0中引入的一项特征，自从这项语言特征出现多年来，我相信，几乎所有的Java程序员不仅听说过，而且使用过它。关于Java泛型的教程，免费的，不免费的，有很多。我遇到的最好的教材有： The Java Tutorial
-Java Generics and &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><![CDATA[Jonny Zheng]]></title>
+  <link href="http://jonnyzheng.github.com/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.com/"/>
+  <updated>2012-07-27T14:30:24+08:00</updated>
+  <id>http://jonnyzheng.github.com/</id>
+  <author>
+    <name><![CDATA[Jonny]]></name>
+    <email><![CDATA[mars131@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-  <link rel="canonical" href="http://jonnyzheng.github.com/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-	  MathJax.Hub.Config({
-		      tex2jax: {
-			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-				          processEscapes: true
-					      
-		      }
-		        
-	  });
-  </script>
-
-  <script type="text/x-mathjax-config">
-	      MathJax.Hub.Config({
-		            tex2jax: {
-				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-					          
-			    }
-			        
-	      });
-      </script>
-
-      <script type="text/x-mathjax-config">
-	          MathJax.Hub.Queue(function() {
-			          var all = MathJax.Hub.getAllJax(), i;
-				          for(i=0; i < all.length; i += 1) {
-						              all[i].SourceElement().parentNode.className += ' has-jax';
-							              
-					  }
-					      
-	  });
-  </script>
-
-  <script type="text/javascript"
-	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-  </script>
-
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Jonny Zheng</a></h1>
-  
-    <h2>I'm an idealist, not perfectionist</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-28T00:00:00+08:00" pubdate data-updated="true">Mar 28<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>转自<a href="http://www.aqee.net/java-generics-quick-tutorial/">外刊it评论</a></p>
+  <entry>
+    <title type="html"><![CDATA[Java泛型简明教程]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/"/>
+    <updated>2012-03-28T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng</id>
+    <content type="html"><![CDATA[<p>转自<a href="http://www.aqee.net/java-generics-quick-tutorial/">外刊it评论</a></p>
 
 <p>泛型是Java SE 5.0中引入的一项特征，自从这项语言特征出现多年来，我相信，几乎所有的Java程序员不仅听说过，而且使用过它。关于Java泛型的教程，免费的，不免费的，有很多。我遇到的最好的教材有：</p>
 
@@ -457,42 +344,15 @@ Java Generics and &hellip;">
 <p>Bloch提醒说，这PECS是指”Producer Extends, Consumer Super”，这个更容易记忆和运用。
 <br />
 [<a href="http://www.javacodegeeks.com/2011/04/java-generics-quick-tutorial.html">本文英文原文链接：Java Generics Quick Tutorial</a> ] </p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-20T00:00:00+08:00" pubdate data-updated="true">Mar 20<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>转贴：以此为标准铭记于心</p>
+  <entry>
+    <title type="html"><![CDATA[37signals倡导及实践的8个理念]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/"/>
+    <updated>2012-03-20T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian</id>
+    <content type="html"><![CDATA[<p>转贴：以此为标准铭记于心</p>
 
 <p>在软件设计界，37signals是非常受欢迎的一个小团队，对于Geek更是如此。不仅因为其自身产品的简洁、精益，更在于其对自身理念的实践。同时他们出版的书籍深受欢迎，特别是《Getting Real》及《Rework》。下面让我们看看他们所倡导的8个理念，对于产品设计、企业管理甚至个人素养都具有一定参考价值。
 <br /><strong>可用性才是永恒</strong>
@@ -514,42 +374,15 @@ Java Generics and &hellip;">
 <br /></p>
 
 <p>转自36氪 <a href="http://www.36kr.com/p/92141.html" title="37signals倡导及实践的8个理念">37signals倡导及实践的8个理念</a></p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-12T00:00:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。</p>
+  <entry>
+    <title type="html"><![CDATA[Sublime 下配置vim模式]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/"/>
+    <updated>2012-03-12T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/12/sublime&#8211;xia-pei-zhi-vim-mo-shi</id>
+    <content type="html"><![CDATA[<p>最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。</p>
 
 <p>sublime支持文本编辑使用 vim 模式，vim 快捷键编辑文本还是挺快的，两个编辑器融合一下也挺好，选择Preferences-&gt;Settings- Default, 在文本的最下面有一行 </p>
 
@@ -566,42 +399,15 @@ Java Generics and &hellip;">
 <p>这个keymap文件里可以定义自己习惯的快捷键方式，有兴趣的不妨研究研究。</p>
 
 <p>vintage这个插件并不支持command， 想要支持还需要下一个<a href="https://github.com/SublimeText/VintageEx" title="VintageEx">VintageEx </a>包，一些简单的命令就可以用了。&lt;/esc&gt;</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-02T00:00:00+08:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。</p>
+  <entry>
+    <title type="html"><![CDATA[关于Jquery offset().top 在IE和Firefox下行为不一致的问题]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/"/>
+    <updated>2012-03-02T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top&#8211;zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti</id>
+    <content type="html"><![CDATA[<p>项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。</p>
 
 <p>于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。调试了一会貌似不是我代码的原因，于是到JSTree的源码里看看，结果看到下面这一句，他计算的事件点击在页面的position要在node的li高度范围内，这个不知道为啥要这样做，很是奇怪，但是这就是为什么在iframe里会出怪问题的原因。</p>
 
@@ -630,42 +436,15 @@ Java Generics and &hellip;">
 </span><span class="line">if(trgt.is("ins") &amp;&amp; event.pageY - posY &lt; this.data.core.li_height) { this.toggle_node(trgt); }</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Jquery里也有人提到这个问题，新版的JSTree里已经修复此bug， 附上地址供参考</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-01-06T00:00:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>很多本地化生活网站的一个基本功能就是根据用户的IP地址判断所在的城市，基本的逻辑就是有一个ip库，根据ip库里的记录找到用户ip地址所在的范围。</p>
+  <entry>
+    <title type="html"><![CDATA[根据IP获得城市名称 Ruby 版]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/"/>
+    <updated>2012-01-06T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng&#8211;ruby&#8211;ban</id>
+    <content type="html"><![CDATA[<p>很多本地化生活网站的一个基本功能就是根据用户的IP地址判断所在的城市，基本的逻辑就是有一个ip库，根据ip库里的记录找到用户ip地址所在的范围。</p>
 
 <p>IP库没有太多选择，我在网上找到的一个<a href="http://www.maxmind.com/app/ip-location">http://www.maxmind.com/app/ip-location</a>， 这个网站本身提供收费的IP库和免费的IP库，收费的库在准确率上要稍微高一些，拿城市的库做一个例子，左边是免费版，右边是收费版：</p>
 
@@ -751,42 +530,15 @@ Java Generics and &hellip;">
 </span><span class="line">=&gt; [“AS8342”, “RTComm.RU Autonomous System”]</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>我下了一个citylite的免费库，只试了我自己的地址，判断是准确的，还没有找其他的地方进行测试,79%的准确率不高也不低，用作预判断还是可以接受的。</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">Vim Window下显示换行符的问题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-11-18T00:00:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p> </p>
+  <entry>
+    <title type="html"><![CDATA[vim window下显示换行符的问题]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/"/>
+    <updated>2011-11-18T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti</id>
+    <content type="html"><![CDATA[<p> </p>
 
 <p>关于回车与换行</p>
 
@@ -812,42 +564,15 @@ Java Generics and &hellip;">
 </pre></td><td class="code"><pre><code class=""><span class="line">set fileformat=unix</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p> </p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">Linode 和 Amazon EC2 国内访问速度的比较</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-10T00:00:00+08:00" pubdate data-updated="true">Sep 10<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>这两天在看云主机和vps，比较了一下目前的网速:</p>
+  <entry>
+    <title type="html"><![CDATA[linode 和 Amazon EC2 国内访问速度的比较]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/"/>
+    <updated>2011-09-10T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/09/10/linode&#8211;he&#8211;amazon-ec2&#8211;guo-nei-fang-wen-su-du-de-bi-jiao</id>
+    <content type="html"><![CDATA[<p>这两天在看云主机和vps，比较了一下目前的网速:</p>
 
 <p> </p>
 
@@ -864,84 +589,30 @@ Java Generics and &hellip;">
 <p>盛大云 (云中书城)  10- 20ms   云中书城是他唯一给出的案例，没法测试别的是否也这么快。</p>
 
 <p>刚申请成功盛大云， ping 新浪的结果是135 ms左右, 而且访问国外速度比较慢，linux下包有时只有8k, 继续试用中。</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/">长期招募创业伙伴 上海地区</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-10T00:00:00+08:00" pubdate data-updated="true">Sep 10<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>本人正在进行一个创业计划，如果你是：交互及设计师，前端攻城师，Rails 攻城师 ,最好上海地区，如果能力很强可以外地， 而且希望趁年轻一起做一些疯狂的事情，可以联系我:mars131[at]gmail.com  。</p>
+  <entry>
+    <title type="html"><![CDATA[长期招募创业伙伴 上海地区]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/"/>
+    <updated>2011-09-10T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban&#8212;shang-hai-di-qu</id>
+    <content type="html"><![CDATA[<p>本人正在进行一个创业计划，如果你是：交互及设计师，前端攻城师，Rails 攻城师 ,最好上海地区，如果能力很强可以外地， 而且希望趁年轻一起做一些疯狂的事情，可以联系我:mars131[at]gmail.com  。</p>
 
 <p>前期以业余时间为主，没有报酬，如果能融资到钱或者项目上线有收入了可以全职，待遇肯定比平均标准高，而且创业伙伴有股份。</p>
 
 <p>目前急需设计师做交互构思和设计，欢迎推荐。</p>
 
 <p>站点: <a title="米十网" href="http://www.riceten.com">www.riceten.com</a></p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/">Paperclip在development 模式下打印不出convert 命令</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-02T00:00:00+08:00" pubdate data-updated="true">Sep 2<span>nd</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天升级了一下bundle，结果在调试时发现原先可以打印paperclip执行的imagemagick命令，现在却不可以了，网上看了一下，原因是paperclip 调用了 Cocaine插件， 而之前执行命令的log代码已经删掉了，全靠Cocaine输出。</p>
+  <entry>
+    <title type="html"><![CDATA[Paperclip在development 模式下打印不出convert 命令]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/"/>
+    <updated>2011-09-02T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/09/02/paperclip-zai-development&#8211;mo-shi-xia-da-yin-bu-chu-convert&#8211;ming-ling</id>
+    <content type="html"><![CDATA[<p>今天升级了一下bundle，结果在调试时发现原先可以打印paperclip执行的imagemagick命令，现在却不可以了，网上看了一下，原因是paperclip 调用了 Cocaine插件， 而之前执行命令的log代码已经删掉了，全靠Cocaine输出。</p>
 
 <p>简单的改法:</p>
 
@@ -950,42 +621,15 @@ Java Generics and &hellip;">
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">Cocaine::CommandLine.logger = Logger.new(STDOUT)</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/">Git Rebase 后本地commit记录丢失</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-31T00:00:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今天下班前要代码要上测试环境，和另外两个同事一起merge代码，等我merge的时候我发现pull不到更新，于是问他俩，他们竟然都签入到了master里去了，邮件里写的很清楚要签入到分支的，两个人一个都没看邮件，当时不hold住就要吐血了。</p>
+  <entry>
+    <title type="html"><![CDATA[Git Rebase 后本地commit记录丢失]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/"/>
+    <updated>2011-08-31T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/08/31/git-rebase&#8211;hou-ben-di-commit-ji-lu-diu-shi</id>
+    <content type="html"><![CDATA[<p>今天下班前要代码要上测试环境，和另外两个同事一起merge代码，等我merge的时候我发现pull不到更新，于是问他俩，他们竟然都签入到了master里去了，邮件里写的很清楚要签入到分支的，两个人一个都没看邮件，当时不hold住就要吐血了。</p>
 
 <p>OK,  反正可以用rebase,  于是用TortoiseGit的rebase功能把他们在master上的代码merge到当前分支上来，一切搞定后提交测试，结果他俩的代码都正确了，我之前写的功能没有了，再看看代码今天写的东西都没有了，shit, 看来真是hold不住了。</p>
 
@@ -1049,97 +693,156 @@ Java Generics and &hellip;">
 <p>终于找回了丢失的代码，可以不用重写一遍了，而且学到了很有用的解决方法，看来犯错也不都是坏事。</p>
 
 <p>最后补一句，还是命令行比较好用，图形化的复杂操作不会用啊。</p>
-</div>
+]]></content>
+  </entry>
   
+  <entry>
+    <title type="html"><![CDATA[windows下为TortoiseGit生成密钥]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao/"/>
+    <updated>2011-06-29T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/06/29/windows&#8211;wei-tortoisegit-sheng-cheng-mi-yao</id>
+    <content type="html"><![CDATA[<p>使用TortoiseGit 的时候如果进行远程提交的话使用putty密钥会比较方便，记录一下生成密钥的步骤。</p>
+
+<ol>
+  <li>
+    <p>下载 putty, putty-key-Generator
+putty 是用来连接远程linux server的客户端，putty-key-Generator是用来生成公钥和密钥的。</p>
+  </li>
+  <li>
+    <p>生成公钥密钥
+运行  putty-key-Generator，设定生成公钥的长度，一般是1024,2048 .  然后点击Generate按钮，同时鼠标需要在生产区域不停的动，直到密钥生成。
+生成好后，key-comment填写 <code>用户名@主机名</code> ，如: <code>git@server1</code></p>
+  </li>
+  <li>
+    <p>Linux 端配置
+确保 /etc/ssh/ssh_config文件中下面的配置打开
+RSAAuthentication yes
+编辑 用户目录下.ssh/authorized_keys, 把第一步生成好的公钥替换掉原来的。
+修改权限：</p>
+  </li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">chmod 700 .ssh
+</span><span class="line">chmod 600 .ssh/authorized_keys</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ol>
+  <li>windows端进行连接
+使用putty进行连接，connection-&gt;ssh-&gt;auth 里选择第一步保存的私钥， 填写好session信息后登陆。输入login name, 这时使用了私钥就不再需要密码了。</li>
+</ol>
+
+<p> </p>
+]]></content>
+  </entry>
   
+  <entry>
+    <title type="html"><![CDATA[Mysql 新版本编译参数]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/06/12/mysql--xin-ban-ben-bian-yi-can-shu/"/>
+    <updated>2011-06-12T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/06/12/mysql&#8211;xin-ban-ben-bian-yi-can-shu</id>
+    <content type="html"><![CDATA[<p>新版本的mysql 使用了CMAKE作为编译工具，不论这种方法的优缺点，先上编译参数：</p>
 
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">cmake . \
+</span><span class="line">-DCMAKE_BUILD_TYPE:STRING=Release \
+</span><span class="line">-DCMAKE_INSTALL_PREFIX:PATH=/usr/local/mysql \
+</span><span class="line">-DDEFAULT_CHARSET:STRING=utf8 \
+</span><span class="line">-DDEFAULT_COLLATION:STRING=utf8_general_ci \
+</span><span class="line">-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+</span><span class="line">-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
+</span><span class="line">-DCOMMUNITY_BUILD:BOOL=ON \
+</span><span class="line">-DENABLED_PROFILING:BOOL=ON \
+</span><span class="line">-DENABLE_DEBUG_SYNC:BOOL=OFF \
+</span><span class="line">-DINSTALL_LAYOUT:STRING=STANDALONE \
+</span><span class="line">-DMYSQL_MAINTAINER_MODE:BOOL=OFF \
+</span><span class="line">-DWITH_EMBEDDED_SERVER:BOOL=ON \
+</span><span class="line">-DWITH_EXTRA_CHARSETS:STRING=all \
+</span><span class="line">-DWITH_SSL:STRING=bundled \
+</span><span class="line">-DWITH_UNIT_TESTS:BOOL=OFF \
+</span><span class="line">-DWITH_ZLIB:STRING=bundled \
+</span><span class="line">-LH</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-    </article>
+<p>具体可参考 <a href="http://forge.mysql.com/wiki/CMake">http://forge.mysql.com/wiki/CMake</a></p>
+
+<p>CMake和configure的命令行参数比较 <a href="http://forge.mysql.com/wiki/CMake#Introduction">http://forge.mysql.com/wiki/CMake#Introduction</a></p>
+]]></content>
+  </entry>
   
-  <div class="pagination">
-    
-      <a class="prev" href="/blog/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
+  <entry>
+    <title type="html"><![CDATA[关于 find_in_set 的性能问题]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/06/12/28/"/>
+    <updated>2011-06-12T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/06/12/28</id>
+    <content type="html"><![CDATA[<p>同事不少数据表设计的时候使用一个字段来存储多对多关系，比如 表 user中有一个字段叫 category, category存储的是 “1,3,9” 这样的类型的数据，实际上是category的id 用逗号分隔开来的。</p>
+
+<p>要查询一个用户属于id为2分类的用户可以这么写</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">select * from `user` where find_in_set('2',`user`.`category`)</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>具体find_in_set 的使用请参照手册</p>
+
+<p><a href="http://dev.mysql.com/doc/refman/5.1/en/string-functions.html#function_find-in-set">http://dev.mysql.com/doc/refman/5.1/en/string-functions.html#function_find-in-set</a></p>
+
+<p>虽然这样很好用，但问题是如果数据量大的情况下怎么办，性能会是问题么，手册上有说对find_in_set 做的优化，但在没有索引的情况下他的性能应该是个问题。</p>
+
+<p>于是做了个测试，user 表录入 100万的数据，同时建立 user_category 表，每个user有 3 个分类，那么category表里有300万条记录。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>[]</span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">user_category</span><span class="o">`</span> <span class="p">(</span>
+</span><span class="line"> <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+</span><span class="line"> <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line"> <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line"> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
+</span><span class="line"> <span class="k">KEY</span> <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">category_id</span><span class="o">`</span><span class="p">),</span>
+</span><span class="line"> <span class="k">KEY</span> <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">tax_id</span><span class="o">`</span><span class="p">)</span>
+</span><span class="line"><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="n">AUTO_INCREMENT</span><span class="o">=</span><span class="mi">1</span> <span class="k">DEFAULT</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>现在比较一下在百万级的数据量上使用 join 链接外键查询和find_in_set查询的性能</p>
+
+<h5 id="findinset-22">使用 find_in_set 查询，平均时间在2.2秒左右</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">SELECT SQL_NO_CACHE COUNT(*) FROM `user` WHERE FIND_IN_SET(65,category)</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h5 id="left-join--02">使用left join ， 使用了右表中的索引，平均时间在0.2秒左右</h5>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">SELECT SQL_NO_CACHE COUNT(DISTINCT(`user`.id)) FROM `user`
+</span><span class="line">LEFT JOIN `user_category` ON `user`.`id`= `user_category`.`user_id`
+</span><span class="line">WHERE `user_category`.`category_id`=75</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>所以在大数据量的情况下还是不适合用find_in_set, 不过有些表的数据可能永远就那么点数据，这个时候为了减少表数量，倒是可以用这样的方法做。</p>
+]]></content>
+  </entry>
   
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/">长期招募创业伙伴 上海地区</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/">Paperclip在development 模式下打印不出convert 命令</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/">Git Rebase 后本地commit记录丢失</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Jonny -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-
-
-
-
-
-
-
-
-
-
-</body>
-</html>
+</feed>

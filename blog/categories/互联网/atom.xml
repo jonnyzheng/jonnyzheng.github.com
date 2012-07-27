@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 互联网 | Jonny Zheng]]></title>
+  <link href="http://jonnyzheng.github.com/blog/categories/互联网/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.com/"/>
+  <updated>2012-07-27T14:30:24+08:00</updated>
+  <id>http://jonnyzheng.github.com/</id>
+  <author>
+    <name><![CDATA[Jonny]]></name>
+    <email><![CDATA[mars131@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[37signals倡导及实践的8个理念]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/"/>
+    <updated>2012-03-20T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian</id>
+    <content type="html"><![CDATA[<p>转贴：以此为标准铭记于心</p>
+
+<p>在软件设计界，37signals是非常受欢迎的一个小团队，对于Geek更是如此。不仅因为其自身产品的简洁、精益，更在于其对自身理念的实践。同时他们出版的书籍深受欢迎，特别是《Getting Real》及《Rework》。下面让我们看看他们所倡导的8个理念，对于产品设计、企业管理甚至个人素养都具有一定参考价值。
+<br /><strong>可用性才是永恒</strong>
+其它一切都可能消失，唯可用性永远不会。我们只建立你需要的软件，其它一切都是多余。
+<br /><strong>优质的服务就是一切</strong>
+我们以快速和友好的客户服务著称，每天都努力确保这份荣誉。
+<br /><strong>简洁清晰是王道</strong>
+在37signals，口号、术语以及任何吹嘘式语言将无立足之地。我们的沟通讲求清晰与真诚。
+<br /><strong>客户就是投资者</strong>
+我们的客户通过购买产品支持我们的日常运作，我们向他们汇报工作，而不是投资人、市场或者董事会。
+<br /><strong>基础的元素最美</strong>
+我们从不会忽略真正重要的东西：基础元素、优质服务、易用性、可靠的价格以及对我们客户时间、金钱与信任的尊重。
+<br /><strong>定价公开</strong>
+我们相信我们提供的价格是公道的，所有的价格面向所有人公开。
+<br /><strong>软件需要简单容易</strong>
+我们的产品都具有直觉性，打开软件几分钟就可上手，而非花上几天甚至几周时间。我们不会给你培训而收费，因为你根本不需要。
+<br /><strong>长期合作是可憎的</strong>
+没有人愿意将自己绑在一件不喜欢的事情上。我们的客户可以随时取消合作。
+<br /></p>
+
+<p>转自36氪 <a href="http://www.36kr.com/p/92141.html" title="37signals倡导及实践的8个理念">37signals倡导及实践的8个理念</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[linode 和 Amazon EC2 国内访问速度的比较]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/"/>
+    <updated>2011-09-10T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao</id>
+    <content type="html"><![CDATA[<p>这两天在看云主机和vps，比较了一下目前的网速:</p>
+
+<p> </p>
+
+<p>AWS 新加坡机房 300ms左右</p>
+
+<p>AWS 日本机房 120ms左右</p>
+
+<p>linode 美国机房 200-300ms左右，不稳定，晚上会慢一点，估计是美国白天的关系。</p>
+
+<p>linode 日本机房 70ms左右，前两天刚从美国迁移过来，速度很不错。</p>
+
+<p>公司香港机房  50 ms 仅做参考</p>
+
+<p>盛大云 (云中书城)  10- 20ms   云中书城是他唯一给出的案例，没法测试别的是否也这么快。</p>
+
+<p>刚申请成功盛大云， ping 新浪的结果是135 ms左右, 而且访问国外速度比较慢，linux下包有时只有8k, 继续试用中。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[长期招募创业伙伴 上海地区]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/"/>
+    <updated>2011-09-10T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu</id>
+    <content type="html"><![CDATA[<p>本人正在进行一个创业计划，如果你是：交互及设计师，前端攻城师，Rails 攻城师 ,最好上海地区，如果能力很强可以外地， 而且希望趁年轻一起做一些疯狂的事情，可以联系我:mars131[at]gmail.com  。</p>
+
+<p>前期以业余时间为主，没有报酬，如果能融资到钱或者项目上线有收入了可以全职，待遇肯定比平均标准高，而且创业伙伴有股份。</p>
+
+<p>目前急需设计师做交互构思和设计，欢迎推荐。</p>
+
+<p>站点: <a title="米十网" href="http://www.riceten.com">www.riceten.com</a></p>
+]]></content>
+  </entry>
+  
+</feed>

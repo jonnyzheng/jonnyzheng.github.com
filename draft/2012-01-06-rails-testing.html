@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Rails Testing - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="Rails 框架从一开始就很好的支持各种测试(单元测试，集成测试),  到现在又有很多优秀的plugin提供各方面的补充，在我们的项目里用到了RSpec + FactoryGirl(是不是很性感) + autotest, 说一说使用经验供大家参考: 开始之前说点跑题的话，Rails &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.com/draft/2012-01-06-rails-testing.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails Testing</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+
+
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Rails 框架从一开始就很好的支持各种测试(单元测试，集成测试),  到现在又有很多优秀的plugin提供各方面的补充，在我们的项目里用到了RSpec + FactoryGirl(是不是很性感) + autotest, 说一说使用经验供大家参考:</p>
+
+<p>开始之前说点跑题的话，Rails 当时是深受敏捷开发的影响，所以测试功能是一点都不含糊的，但是就TDD来说我还是非常不喜欢的。首先TDD要求先写测试用例，在初期开发中会有很多变数，很多你写的测试用例可能在以后需要修改，而产品没有成型之前做这样的工作有点得不偿失，其次是在没有实际东西之前的凭空想象有点折磨人，我的脑细胞还有别的用处，不想浪费在这方面。再就是个人认为测试代码是一个持续长久的过程，我们没必要通过测试来驱动我们的代码工作，但是我们需要通过持续的提高测试覆盖率来保证我们的代码质量，提高我们的测试效率，可以让我们有更多的时间做更重要的事情，而不是陷入无数bug的泥沼里。</p>
+<h3>Rspec</h3>
+<p> </p>
+
+<p> </p>
+
+<p> </p>
+
+<p> </p>
+<h3>FactoryGirl</h3>
+<p>有了这个工厂，可以很方便的构造不同的模拟数据来运行测试代码。还是上面的例子，如果要测试</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">absence_at</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>方法，涉及到多个model：</p>
+<ul>
+<li>HistoryRecord：User的上课记录</li>
+	<li>Calendar：User的课程表</li>
+	<li>Logging：User的日志信息</li>
+</ul>
+<p>如果不用factory-girl构造测试数据，我们将不得不在fixture构造这些测试数据。在fixture构造的数据无法指定是那个测试用例使用，但是如果用Factory的话，可以为这个方法专门指定一组测试数据。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Factory.define :user_absence_example,:class =&gt; User do |user|
+</span><span class="line">  user.login "test"
+</span><span class="line">  class &lt;&lt; user
+</span><span class="line">    def default_history_records
+</span><span class="line">      [Factory.build(:history_record,:started_at=&gt;Time.now),
+</span><span class="line">       Factory.build(:history_record,:started_at=&gt;Time.now)]
+</span><span class="line">    end
+</span><span class="line">    def default_calendars
+</span><span class="line">      [Factory.build(:calendar),
+</span><span class="line">       Factory.build(:calendar)]
+</span><span class="line">     end
+</span><span class="line">     def default_loggings
+</span><span class="line">      [Factory.build(:logging,:started_at=&gt;1.days.ago),
+</span><span class="line">       Factory.build(:logging,:started_at=&gt;1.days.ago)]
+</span><span class="line">     end
+</span><span class="line">   end
+</span><span class="line">   user.history_records {default_history_records}
+</span><span class="line">   user.calendars {default_calendars}
+</span><span class="line">   user.loggings {default_loggings}
+</span><span class="line">end</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个测试数据的构造工厂，可以放在factories.rb文件中，方便其他测试用例使用，也可以直接放到测试文件的before中，仅供本测试文件使用。通过factory的构造，不仅可以为多个测试用例共享同一组测试数据，而且测试代码也简洁明了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Factory.define :user_absence_example,:class =&gt; User do |user|
+</span><span class="line">  user.login "test"
+</span><span class="line">  class &lt;&lt; user
+</span><span class="line">    def default_history_records
+</span><span class="line">      [Factory.build(:history_record,:started_at=&gt;Time.now),
+</span><span class="line">       Factory.build(:history_record,:started_at=&gt;Time.now)]
+</span><span class="line">    end
+</span><span class="line">    def default_calendars
+</span><span class="line">      [Factory.build(:calendar),
+</span><span class="line">       Factory.build(:calendar)]
+</span><span class="line">     end
+</span><span class="line">     def default_loggings
+</span><span class="line">      [Factory.build(:logging,:started_at=&gt;1.days.ago),
+</span><span class="line">       Factory.build(:logging,:started_at=&gt;1.days.ago)]
+</span><span class="line">     end
+</span><span class="line">   end
+</span><span class="line">   user.history_records {default_history_records}
+</span><span class="line">   user.calendars {default_calendars}
+</span><span class="line">   user.loggings {default_loggings}
+</span><span class="line">end</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Factory.define :user_absence_example,:class =&gt; User do |user|
+</span><span class="line">  user.login "test"
+</span><span class="line">  class &lt;&lt; user
+</span><span class="line">    def default_history_records
+</span><span class="line">      [Factory.build(:history_record,:started_at=&gt;Time.now),
+</span><span class="line">       Factory.build(:history_record,:started_at=&gt;Time.now)]
+</span><span class="line">    end
+</span><span class="line">    def default_calendars
+</span><span class="line">      [Factory.build(:calendar),
+</span><span class="line">       Factory.build(:calendar)]
+</span><span class="line">     end
+</span><span class="line">     def default_loggings
+</span><span class="line">      [Factory.build(:logging,:started_at=&gt;1.days.ago),
+</span><span class="line">       Factory.build(:logging,:started_at=&gt;1.days.ago)]
+</span><span class="line">     end
+</span><span class="line">   end
+</span><span class="line">   user.history_records {default_history_records}
+</span><span class="line">   user.calendars {default_calendars}
+</span><span class="line">   user.loggings {default_loggings}
+</span><span class="line">end</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Factory.define :user_absence_example,:class =&gt; User do |user|
+</span><span class="line">  user.login "test"
+</span><span class="line">  class &lt;&lt; user
+</span><span class="line">    def default_history_records
+</span><span class="line">      [Factory.build(:history_record,:started_at=&gt;Time.now),
+</span><span class="line">       Factory.build(:history_record,:started_at=&gt;Time.now)]
+</span><span class="line">    end
+</span><span class="line">    def default_calendars
+</span><span class="line">      [Factory.build(:calendar),
+</span><span class="line">       Factory.build(:calendar)]
+</span><span class="line">     end
+</span><span class="line">     def default_loggings
+</span><span class="line">      [Factory.build(:logging,:started_at=&gt;1.days.ago),
+</span><span class="line">       Factory.build(:logging,:started_at=&gt;1.days.ago)]
+</span><span class="line">     end
+</span><span class="line">   end
+</span><span class="line">   user.history_records {default_history_records}
+</span><span class="line">   user.calendars {default_calendars}
+</span><span class="line">   user.loggings {default_loggings}
+</span><span class="line">end</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">Factory.define :user_absence_example,:class =&gt; User do |user|
+</span><span class="line">  user.login "test"
+</span><span class="line">  class &lt;&lt; user
+</span><span class="line">    def default_history_records
+</span><span class="line">      [Factory.build(:history_record,:started_at=&gt;Time.now),
+</span><span class="line">       Factory.build(:history_record,:started_at=&gt;Time.now)]
+</span><span class="line">    end
+</span><span class="line">    def default_calendars
+</span><span class="line">      [Factory.build(:calendar),
+</span><span class="line">       Factory.build(:calendar)]
+</span><span class="line">     end
+</span><span class="line">     def default_loggings
+</span><span class="line">      [Factory.build(:logging,:started_at=&gt;1.days.ago),
+</span><span class="line">       Factory.build(:logging,:started_at=&gt;1.days.ago)]
+</span><span class="line">     end
+</span><span class="line">   end
+</span><span class="line">   user.history_records {default_history_records}
+</span><span class="line">   user.calendars {default_calendars}
+</span><span class="line">   user.loggings {default_loggings}
+</span><span class="line">end</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/">长期招募创业伙伴 上海地区</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/">Paperclip在development 模式下打印不出convert 命令</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/">Git Rebase 后本地commit记录丢失</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

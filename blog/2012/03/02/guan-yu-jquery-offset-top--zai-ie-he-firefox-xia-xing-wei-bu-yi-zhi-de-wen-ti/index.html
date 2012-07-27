@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>关于Jquery offset().top 在IE和Firefox下行为不一致的问题 - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。 于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-02T00:00:00+08:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。</p>
+
+<p>于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。调试了一会貌似不是我代码的原因，于是到JSTree的源码里看看，结果看到下面这一句，他计算的事件点击在页面的position要在node的li高度范围内，这个不知道为啥要这样做，很是奇怪，但是这就是为什么在iframe里会出怪问题的原因。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">if(trgt.is("ins") &amp;&amp; event.pageY - trgt.offset().top &lt; this.data.core.li_height)
+</span><span class="line">{
+</span><span class="line">    this.toggle_node(trgt);
+</span><span class="line">}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在ie下面当右边滚动条滚动后$(element).offset().top计算出来的值就不对了，必须要加document.documentElement.scrollTop 的值才能得到正确的结果，迫不得已，修补bug如下</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">var posY = 0;
+</span><span class="line">if(window.parent!= window &amp;&amp; $.browser.msie)
+</span><span class="line">    posY= (trgt.offset().top+document.documentElement.scrollTop);
+</span><span class="line">else
+</span><span class="line">    posY= trgt.offset().top;
+</span><span class="line">if(trgt.is("ins") &amp;&amp; event.pageY - posY &lt; this.data.core.li_height) { this.toggle_node(trgt); }</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Jquery里也有人提到这个问题，新版的JSTree里已经修复此bug， 附上地址供参考</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-02T00:00:00+08:00" pubdate data-updated="true">Mar 2<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/杂货铺/'>杂货铺</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/" title="Previous Post: 根据IP获得城市名称 Ruby 版">&laquo; 根据IP获得城市名称 Ruby 版</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/" title="Next Post: Sublime 下配置vim模式">Sublime 下配置vim模式 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/">长期招募创业伙伴 上海地区</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/">Paperclip在development 模式下打印不出convert 命令</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/">Git Rebase 后本地commit记录丢失</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

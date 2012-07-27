@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Git Rebase 后本地commit记录丢失 - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="今天下班前要代码要上测试环境，和另外两个同事一起merge代码，等我merge的时候我发现pull不到更新，于是问他俩，他们竟然都签入到了master里去了，邮件里写的很清楚要签入到分支的，两个人一个都没看邮件，当时不hold住就要吐血了。 OK,  反正可以用rebase,   &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.com/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Git Rebase 后本地commit记录丢失</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-31T00:00:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>今天下班前要代码要上测试环境，和另外两个同事一起merge代码，等我merge的时候我发现pull不到更新，于是问他俩，他们竟然都签入到了master里去了，邮件里写的很清楚要签入到分支的，两个人一个都没看邮件，当时不hold住就要吐血了。</p>
+
+<p>OK,  反正可以用rebase,  于是用TortoiseGit的rebase功能把他们在master上的代码merge到当前分支上来，一切搞定后提交测试，结果他俩的代码都正确了，我之前写的功能没有了，再看看代码今天写的东西都没有了，shit, 看来真是hold不住了。</p>
+
+<p>查看log记录，没有push到远程的commit也都不见，难道真的要重写一遍么，还好万能的 Google 救了我。</p>
+
+<p>即使rebase命令已经干掉了上一次push到现在的所有提交记录但是在本地文件里还是有相关信息的，找到项目目录下的git文件 .git\logs\refs\heads\branchname, 打开来看看</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">0000000000000000000000000000000000000000 f7f3b11f66b709dcd93e1c15825270dce90adc5e jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314676889 +0800	branch: Created from HEAD
+</span><span class="line">
+</span><span class="line">f7f3b11f66b709dcd93e1c15825270dce90adc5e 74173c185de3ce5ee846bc7e0326481276372071 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314682422 +0800	commit (amend): init
+</span><span class="line">
+</span><span class="line">74173c185de3ce5ee846bc7e0326481276372071 93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314682760 +0800	commit (merge): Merge branch 'b3.3' of 10.123.4.212:/opt/git/jolnet into b3.3
+</span><span class="line">
+</span><span class="line">93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 9273c7dbd497d070ebd8704f284444f658666954 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314772033 +0800	commit: 1
+</span><span class="line">
+</span><span class="line">9273c7dbd497d070ebd8704f284444f658666954 9530c1ca1730ab1c249d3c301817bd037b3f6773 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314786503 +0800	commit: daily check in
+</span><span class="line">
+</span><span class="line">9530c1ca1730ab1c249d3c301817bd037b3f6773 c91bb413528815321b10929d9cd26480de64f3bf jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314787003 +0800	commit (amend): daily check in
+</span><span class="line">
+</span><span class="line">c91bb413528815321b10929d9cd26480de64f3bf 3006dced1c8d39108483927bd5cc1e9ee4d1ec05 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314788056 +0800	3006dced1c8d39108483927bd5cc1e9ee4d1ec05: updating HEAD
+</span><span class="line">
+</span><span class="line">3006dced1c8d39108483927bd5cc1e9ee4d1ec05 813acf5e60bc0d2e64c9682fe7498dc79606e1e1 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314788446 +0800	813acf5e60bc0d2e64c9682fe7498dc79606e1e1: updating HEAD
+</span><span class="line">
+</span><span class="line">813acf5e60bc0d2e64c9682fe7498dc79606e1e1 ada2680266b192a0ebf8d4a43ca8ca4812aadc78 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314788695 +0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78: updating HEAD
+</span><span class="line">
+</span><span class="line">ada2680266b192a0ebf8d4a43ca8ca4812aadc78 a259bcff43cc726be011efbbeb5975ffafb87ee5 jonny &lt;jonny.zheng@lexisnexis.com&gt; 1314788871 +0800	commit: rebase</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后一行是rebase的操作，我只要新建个分支在里面找回前一行commit的代码就可以了。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">git checkout -b my_recovery 0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>方法2（这个更简单）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">git reflog
+</span><span class="line"># Suppose the old commit was HEAD@{5} in the ref log
+</span><span class="line">git reset --hard HEAD@{5}</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>终于找回了丢失的代码，可以不用重写一遍了，而且学到了很有用的解决方法，看来犯错也不都是坏事。</p>
+
+<p>最后补一句，还是命令行比较好用，图形化的复杂操作不会用啊。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-31T00:00:00+08:00" pubdate data-updated="true">Aug 31<span>st</span>, 2011</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/杂货铺/'>杂货铺</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao/" title="Previous Post: windows下为TortoiseGit生成密钥">&laquo; windows下为TortoiseGit生成密钥</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/" title="Next Post: Paperclip在development 模式下打印不出convert 命令">Paperclip在development 模式下打印不出convert 命令 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/">长期招募创业伙伴 上海地区</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/">Paperclip在development 模式下打印不出convert 命令</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/">Git Rebase 后本地commit记录丢失</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

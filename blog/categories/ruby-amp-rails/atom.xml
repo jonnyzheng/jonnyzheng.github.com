@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ruby &amp; Rails | Jonny Zheng]]></title>
+  <link href="http://jonnyzheng.github.com/blog/categories/ruby-amp-rails/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.com/"/>
+  <updated>2012-07-27T14:30:24+08:00</updated>
+  <id>http://jonnyzheng.github.com/</id>
+  <author>
+    <name><![CDATA[Jonny]]></name>
+    <email><![CDATA[mars131@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[根据IP获得城市名称 Ruby 版]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/"/>
+    <updated>2012-01-06T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban</id>
+    <content type="html"><![CDATA[<p>很多本地化生活网站的一个基本功能就是根据用户的IP地址判断所在的城市，基本的逻辑就是有一个ip库，根据ip库里的记录找到用户ip地址所在的范围。</p>
+
+<p>IP库没有太多选择，我在网上找到的一个<a href="http://www.maxmind.com/app/ip-location">http://www.maxmind.com/app/ip-location</a>， 这个网站本身提供收费的IP库和免费的IP库，收费的库在准确率上要稍微高一些，拿城市的库做一个例子，左边是免费版，右边是收费版：</p>
+
+<table><tbody>
+<tr>
+<th />
+<td>GeoLite City</td>
+<td><span style="color: #000000;"><a href="http://www.maxmind.com/app/city"><span style="color: #000000;">GeoIP City</span></a></span></td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Free</td>
+<td>$370 initial, $90 per month updates</td>
+</tr>
+<tr>
+<td>Coverage</td>
+<td>Worldwide</td>
+<td>Worldwide</td>
+</tr>
+<tr>
+<td>Accuracy</td>
+<td>Over 99.5% on a country level and 79% on a city level for the US within a 25 mile radius. <a href="http://www.maxmind.com/app/geolite_city_accuracy">More details</a>
+</td>
+<td>Over 99.8% on a country level and 83% on a city level for the US within a 25 mile radius. <a href="http://www.maxmind.com/app/city_accuracy">More details</a>
+</td>
+</tr>
+<tr>
+<td>Redistribution</td>
+<td>Free, subject to GPL/LGPL for APIs and <a href="http://geolite.maxmind.com/download/geoip/database/LICENSE.txt">database license</a>. <a href="http://www.maxmind.com/app/builder">Commercial redistribution licenses</a> are available</td>
+<td>Please contact us.</td>
+</tr>
+<tr>
+<td>Updates</td>
+<td>Updated monthly, at the beginning of each month</td>
+<td>Updated monthly. For binary format, weekly updates, automated updates available by using geoipupdate program included with<a href="http://www.maxmind.com/app/c">C API</a>
+</td>
+</tr>
+</tbody></table>
+
+<p>ruby 的使用很简单，有一个gem库: <a href="http://geoip.rubyforge.org/">http://geoip.rubyforge.org/</a></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>require ‘geoip’
+</span><span class='line'>c = GeoIP.new(‘GeoIP.dat’).country(‘www.nokia.com’)
+</span><span class='line'>=&gt; [“www.nokia.com”, “147.243.3.83”, 69, “FI”, “FIN”, “Finland”, “EU”]
+</span><span class='line'>c.country_code3
+</span><span class='line'>=&gt; “FIN”
+</span><span class='line'>c.to_hash
+</span><span class='line'>=&gt; {:country_code3=&gt;”FIN”, :country_name=&gt;”Finland”, :continent_code=&gt;”EU”,
+</span><span class='line'>:request=&gt;”www.nokia.com”, :country_code=&gt;69, :country_code2=&gt;”FI”, :ip=&gt;”147.243.3.83”}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>c = GeoIP.new(‘GeoLiteCity.dat’).city(‘github.com’)
+</span><span class='line'>=&gt; [“github.com”, “207.97.227.239”, “US”, “USA”, “United States”, “NA”, “CA”,
+</span><span class='line'>“San Francisco”, “94110”, 37.7484, -122.4156, 807, 415, “America/Los_Angeles”]
+</span><span class='line'>» c.longitude
+</span><span class='line'>=&gt; -122.4156
+</span><span class='line'>» c.timezone
+</span><span class='line'>=&gt; “America/Los_Angeles”&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>c = GeoIP.new(‘GeoIPASNum.dat’).asn(“www.fsb.ru”)
+</span><span class='line'>=&gt; [“AS8342”, “RTComm.RU Autonomous System”]</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>我下了一个citylite的免费库，只试了我自己的地址，判断是准确的，还没有找其他的地方进行测试,79%的准确率不高也不低，用作预判断还是可以接受的。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Paperclip在development 模式下打印不出convert 命令]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/"/>
+    <updated>2011-09-02T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling</id>
+    <content type="html"><![CDATA[<p>今天升级了一下bundle，结果在调试时发现原先可以打印paperclip执行的imagemagick命令，现在却不可以了，网上看了一下，原因是paperclip 调用了 Cocaine插件， 而之前执行命令的log代码已经删掉了，全靠Cocaine输出。</p>
+
+<p>简单的改法:</p>
+
+<p>修改 config/environments/development.rb文件，最后一行加一句:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Cocaine::CommandLine.logger = Logger.new(STDOUT)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+]]></content>
+  </entry>
+  
+</feed>

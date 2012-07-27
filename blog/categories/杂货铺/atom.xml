@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: 杂货铺 | Jonny Zheng]]></title>
+  <link href="http://jonnyzheng.github.com/blog/categories/杂货铺/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.com/"/>
+  <updated>2012-07-27T14:30:24+08:00</updated>
+  <id>http://jonnyzheng.github.com/</id>
+  <author>
+    <name><![CDATA[Jonny]]></name>
+    <email><![CDATA[mars131@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sublime 下配置vim模式]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/"/>
+    <updated>2012-03-12T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi</id>
+    <content type="html"><![CDATA[<p>最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。</p>
+
+<p>sublime支持文本编辑使用 vim 模式，vim 快捷键编辑文本还是挺快的，两个编辑器融合一下也挺好，选择Preferences-&gt;Settings- Default, 在文本的最下面有一行 
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>“ignored_packages”: [“vintage”]</span></code></pre></td></tr></table></div></figure></notextile></div>
+ ，这里sublime 默认去掉了vim的支持，我们只需要把”vintage”删掉就好了。</p>
+
+<p>再在编辑框里试试已经ok了，但是在vim里我都把ESC键映射到了’ii’上了： imap ‘ii’ <esc> ，这里并不支持imap。 不过我们可以在vintage 的package包里自己定义，我的机器是windows,默认packages都装在了 C:\Documents and Settings\zhengj1\Application Data\Sublime Text 2\Packages 目录下，找到Vintage\Default.sublime-keymap文件，用文本编辑器打开，加上下面的代码：</esc></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>“ignored_packages”: [“vintage”]</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>这个keymap文件里可以定义自己习惯的快捷键方式，有兴趣的不妨研究研究。</p>
+
+<p>vintage这个插件并不支持command， 想要支持还需要下一个<a href="https://github.com/SublimeText/VintageEx" title="VintageEx">VintageEx </a>包，一些简单的命令就可以用了。&lt;/esc&gt;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[关于Jquery offset().top 在IE和Firefox下行为不一致的问题]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/"/>
+    <updated>2012-03-02T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti</id>
+    <content type="html"><![CDATA[<p>项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。</p>
+
+<p>于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。调试了一会貌似不是我代码的原因，于是到JSTree的源码里看看，结果看到下面这一句，他计算的事件点击在页面的position要在node的li高度范围内，这个不知道为啥要这样做，很是奇怪，但是这就是为什么在iframe里会出怪问题的原因。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>if(trgt.is(“ins”) &amp;&amp; event.pageY - trgt.offset().top &lt; this.data.core.li_height)
+</span><span class='line'>{
+</span><span class='line'>    this.toggle_node(trgt);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>在ie下面当右边滚动条滚动后$(element).offset().top计算出来的值就不对了，必须要加document.documentElement.scrollTop 的值才能得到正确的结果，迫不得已，修补bug如下</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>var posY = 0;
+</span><span class='line'>if(window.parent!= window &amp;&amp; $.browser.msie)
+</span><span class='line'>    posY= (trgt.offset().top+document.documentElement.scrollTop);
+</span><span class='line'>else
+</span><span class='line'>    posY= trgt.offset().top;
+</span><span class='line'>if(trgt.is(“ins”) &amp;&amp; event.pageY - posY &lt; this.data.core.li_height) { this.toggle_node(trgt); }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Jquery里也有人提到这个问题，新版的JSTree里已经修复此bug， 附上地址供参考</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Git Rebase 后本地commit记录丢失]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/"/>
+    <updated>2011-08-31T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi</id>
+    <content type="html"><![CDATA[<p>今天下班前要代码要上测试环境，和另外两个同事一起merge代码，等我merge的时候我发现pull不到更新，于是问他俩，他们竟然都签入到了master里去了，邮件里写的很清楚要签入到分支的，两个人一个都没看邮件，当时不hold住就要吐血了。</p>
+
+<p>OK,  反正可以用rebase,  于是用TortoiseGit的rebase功能把他们在master上的代码merge到当前分支上来，一切搞定后提交测试，结果他俩的代码都正确了，我之前写的功能没有了，再看看代码今天写的东西都没有了，shit, 看来真是hold不住了。</p>
+
+<p>查看log记录，没有push到远程的commit也都不见，难道真的要重写一遍么，还好万能的 Google 救了我。</p>
+
+<p>即使rebase命令已经干掉了上一次push到现在的所有提交记录但是在本地文件里还是有相关信息的，找到项目目录下的git文件 .git\logs\refs\heads\branchname, 打开来看看</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>0000000000000000000000000000000000000000 f7f3b11f66b709dcd93e1c15825270dce90adc5e jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314676889 +0800	branch: Created from HEAD&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>f7f3b11f66b709dcd93e1c15825270dce90adc5e 74173c185de3ce5ee846bc7e0326481276372071 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314682422 +0800	commit (amend): init&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>74173c185de3ce5ee846bc7e0326481276372071 93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314682760 +0800	commit (merge): Merge branch ‘b3.3’ of 10.123.4.212:/opt/git/jolnet into b3.3&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 9273c7dbd497d070ebd8704f284444f658666954 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314772033 +0800	commit: 1&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>9273c7dbd497d070ebd8704f284444f658666954 9530c1ca1730ab1c249d3c301817bd037b3f6773 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314786503 +0800	commit: daily check in&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>9530c1ca1730ab1c249d3c301817bd037b3f6773 c91bb413528815321b10929d9cd26480de64f3bf jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314787003 +0800	commit (amend): daily check in&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>c91bb413528815321b10929d9cd26480de64f3bf 3006dced1c8d39108483927bd5cc1e9ee4d1ec05 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788056 +0800	3006dced1c8d39108483927bd5cc1e9ee4d1ec05: updating HEAD&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>3006dced1c8d39108483927bd5cc1e9ee4d1ec05 813acf5e60bc0d2e64c9682fe7498dc79606e1e1 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788446 +0800	813acf5e60bc0d2e64c9682fe7498dc79606e1e1: updating HEAD&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>813acf5e60bc0d2e64c9682fe7498dc79606e1e1 ada2680266b192a0ebf8d4a43ca8ca4812aadc78 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788695 +0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78: updating HEAD&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>ada2680266b192a0ebf8d4a43ca8ca4812aadc78 a259bcff43cc726be011efbbeb5975ffafb87ee5 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788871 +0800	commit: rebase&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>最后一行是rebase的操作，我只要新建个分支在里面找回前一行commit的代码就可以了。</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git checkout -b my_recovery 0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>方法2（这个更简单）
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git reflog
+</span><span class='line'># Suppose the old commit was HEAD@{5} in the ref log
+</span><span class='line'>git reset –hard HEAD@{5}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>终于找回了丢失的代码，可以不用重写一遍了，而且学到了很有用的解决方法，看来犯错也不都是坏事。</p>
+
+<p>最后补一句，还是命令行比较好用，图形化的复杂操作不会用啊。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[windows下为TortoiseGit生成密钥]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao/"/>
+    <updated>2011-06-29T00:00:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao</id>
+    <content type="html"><![CDATA[<p>使用TortoiseGit 的时候如果进行远程提交的话使用putty密钥会比较方便，记录一下生成密钥的步骤。</p>
+
+<ol>
+  <li>
+    <p>下载 putty, putty-key-Generator
+putty 是用来连接远程linux server的客户端，putty-key-Generator是用来生成公钥和密钥的。</p>
+  </li>
+  <li>
+    <p>生成公钥密钥
+运行  putty-key-Generator，设定生成公钥的长度，一般是1024,2048 .  然后点击Generate按钮，同时鼠标需要在生产区域不停的动，直到密钥生成。
+生成好后，key-comment填写 <code>用户名@主机名</code> ，如: <code>git@server1</code></p>
+  </li>
+  <li>
+    <p>Linux 端配置
+确保 /etc/ssh/ssh_config文件中下面的配置打开
+RSAAuthentication yes
+编辑 用户目录下.ssh/authorized_keys, 把第一步生成好的公钥替换掉原来的。
+修改权限：
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>chmod 700 .ssh
+</span><span class='line'>chmod 600 .ssh/authorized_keys</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+  </li>
+  <li>
+    <p>windows端进行连接
+使用putty进行连接，connection-&gt;ssh-&gt;auth 里选择第一步保存的私钥， 填写好session信息后登陆。输入login name, 这时使用了私钥就不再需要密码了。</p>
+  </li>
+</ol>
+
+<p> </p>
+]]></content>
+  </entry>
+  
+</feed>
