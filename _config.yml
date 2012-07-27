@@ -33,7 +33,7 @@ destination: public
 plugins: plugins
 code_dir: downloads/code
 category_dir: blog/categories
-markdown: rdiscount
+markdown: kramdown
 pygments: false # default python pygments have been replaced by pygments.rb
 
 paginate: 10          # Posts per page on the blog index
@@ -89,11 +89,11 @@ default_asides: [asides/recent_posts.html, asides/github.html, asides/twitter.ht
 #delicious_count: 3
 
 # Disqus Comments
-disqus_short_name: jonnyzhenngblog
-disqus_show_comment_count: false
+#disqus_short_name: jonnyzhenngblog
+#disqus_show_comment_count: false
 
 # Google Analytics
-google_analytics_tracking_id:
+#google_analytics_tracking_id:
 
 # Facebook Like
 facebook_like: false
