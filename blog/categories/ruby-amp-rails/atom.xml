@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ruby &amp; Rails | Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.com/blog/categories/ruby-amp-rails/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-08-31T17:21:25+08:00</updated>
+  <updated>2012-08-31T17:28:06+08:00</updated>
   <id>http://jonnyzheng.github.com/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -60,27 +60,44 @@
 
 <p>ruby 的使用很简单，有一个gem库: <a href="http://geoip.rubyforge.org/">http://geoip.rubyforge.org/</a></p>
 
-<p>{% codeblock %}
-require ‘geoip’
-c = GeoIP.new(‘GeoIP.dat’).country(‘www.nokia.com’)
-=&gt; [“www.nokia.com”, “147.243.3.83”, 69, “FI”, “FIN”, “Finland”, “EU”]
-c.country_code3
-=&gt; “FIN”
-c.to_hash
-=&gt; {:country_code3=&gt;”FIN”, :country_name=&gt;”Finland”, :continent_code=&gt;”EU”,
-:request=&gt;”www.nokia.com”, :country_code=&gt;69, :country_code2=&gt;”FI”, :ip=&gt;”147.243.3.83”}</p>
-
-<p>c = GeoIP.new(‘GeoLiteCity.dat’).city(‘github.com’)
-=&gt; [“github.com”, “207.97.227.239”, “US”, “USA”, “United States”, “NA”, “CA”,
-“San Francisco”, “94110”, 37.7484, -122.4156, 807, 415, “America/Los_Angeles”]
-» c.longitude
-=&gt; -122.4156
-» c.timezone
-=&gt; “America/Los_Angeles”</p>
-
-<p>c = GeoIP.new(‘GeoIPASNum.dat’).asn(“www.fsb.ru”)
-=&gt; [“AS8342”, “RTComm.RU Autonomous System”]
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>require ‘geoip’
+</span><span class='line'>c = GeoIP.new(‘GeoIP.dat’).country(‘www.nokia.com’)
+</span><span class='line'>=&gt; [“www.nokia.com”, “147.243.3.83”, 69, “FI”, “FIN”, “Finland”, “EU”]
+</span><span class='line'>c.country_code3
+</span><span class='line'>=&gt; “FIN”
+</span><span class='line'>c.to_hash
+</span><span class='line'>=&gt; {:country_code3=&gt;”FIN”, :country_name=&gt;”Finland”, :continent_code=&gt;”EU”,
+</span><span class='line'>:request=&gt;”www.nokia.com”, :country_code=&gt;69, :country_code2=&gt;”FI”, :ip=&gt;”147.243.3.83”}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>c = GeoIP.new(‘GeoLiteCity.dat’).city(‘github.com’)
+</span><span class='line'>=&gt; [“github.com”, “207.97.227.239”, “US”, “USA”, “United States”, “NA”, “CA”,
+</span><span class='line'>“San Francisco”, “94110”, 37.7484, -122.4156, 807, 415, “America/Los_Angeles”]
+</span><span class='line'>» c.longitude
+</span><span class='line'>=&gt; -122.4156
+</span><span class='line'>» c.timezone
+</span><span class='line'>=&gt; “America/Los_Angeles”&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>c = GeoIP.new(‘GeoIPASNum.dat’).asn(“www.fsb.ru”)
+</span><span class='line'>=&gt; [“AS8342”, “RTComm.RU Autonomous System”]</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>我下了一个citylite的免费库，只试了我自己的地址，判断是准确的，还没有找其他的地方进行测试,79%的准确率不高也不低，用作预判断还是可以接受的。</p>
 ]]></content>
@@ -97,9 +114,8 @@ c.to_hash
 
 <p>修改 config/environments/development.rb文件，最后一行加一句:</p>
 
-<p>{% codeblock %}
-Cocaine::CommandLine.logger = Logger.new(STDOUT)
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Cocaine::CommandLine.logger = Logger.new(STDOUT)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 ]]></content>
   </entry>

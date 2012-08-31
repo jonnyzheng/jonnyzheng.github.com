@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 学习 | Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.com/blog/categories/学习/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-08-31T17:21:25+08:00</updated>
+  <updated>2012-08-31T17:28:06+08:00</updated>
   <id>http://jonnyzheng.github.com/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -31,19 +31,25 @@
 
 <p>理解Java泛型最简单的方法是把它看成一种便捷语法，能节省你某些Java类型转换(casting)上的操作：</p>
 
-<p>{% codeblock %}
-List<apple> box = ...;
-Apple apple = box.get(0);
-{% endcodeblock %}</apple></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;apple> box = ...;
+</span><span class='line'>Apple apple = box.get(0);</span></code></pre></td></tr></table></div></figure></notextile></div></apple></p>
 
 <p>上面的代码自身已表达的很清楚：box是一个装有Apple对象的List。get方法返回一个Apple对象实例，这个过程不需要进行类型转换。没有泛型，上面的代码需要写成这样：</p>
 
-<p>{% codeblock %}</p>
-
-<p>List box = …;
-Apple apple = (Apple) box.get(0);</p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>List box = …;
+</span><span class='line'>Apple apple = (Apple) box.get(0);&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>很明显，泛型的主要好处就是让编译器保留参数的类型信息，执行类型检查，执行类型转换操作：编译器保证了这些类型转换的绝对无误。</p>
 
@@ -62,11 +68,12 @@ Apple apple = (Apple) box.get(0);</p>
 <h4 id="section-1">泛型类和接口</h4>
 <p>如果一个类或接口上有一个或多个类型变量，那它就是泛型。类型变量由尖括号界定，放在类或接口名的后面：</p>
 
-<p>{% codeblock %}
-public interface List<t> extends Collection<t> {
-	...
-}
-{% endcodeblock %}</t></t></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public interface List&lt;t> extends Collection&lt;t> {
+</span><span class='line'>	...
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></t></t></p>
 
 <p>简单的说，类型变量扮演的角色就如同一个参数，它提供给编译器用来类型检查的信息。</p>
 
@@ -74,9 +81,8 @@ public interface List<t> extends Collection<t> {
 
 <p>实际上，这新出现的泛型标记，或者说这个List接口里的get方法是这样的：</p>
 
-<p>{% codeblock %}
-T get(int index);
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>T get(int index);</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>get方法实际返回的是一个类型为T的对象，T是在List声明中的类型变量。</p>
 
@@ -84,9 +90,8 @@ T get(int index);
 
 <p>非常的相似，如果方法和构造器上声明了一个或多个类型变量，它们也可以泛型化。</p>
 
-<p>{% codeblock %}
-public static <t> T getFirst(List<t> list)
-{% endcodeblock %}</t></t></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>public static &lt;t> T getFirst(List&lt;t> list)</span></code></pre></td></tr></table></div></figure></notextile></div></t></t></p>
 
 <p>这个方法将会接受一个List类型的参数，返回一个T类型的对象。</p>
 
@@ -94,67 +99,81 @@ public static <t> T getFirst(List<t> list)
 类型安全的写入数据…
 下面的这段代码是个例子，我们创建了一个List<string>实例，然后装入一些数据：</string></p>
 
-<p>{% codeblock %}
-List<string> str = new ArrayList<string>();
-str.add("Hello ");
-str.add("World.");
-{% endcodeblock %}
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;string> str = new ArrayList&lt;string>();
+</span><span class='line'>str.add("Hello ");
+</span><span class='line'>str.add("World.");</span></code></pre></td></tr></table></div></figure></notextile></div>
 如果我们试图在List<string>装入另外一种对象，编译器就会提示错误：</string></string></string></p>
 
-<p>{% codeblock %}
-str.add(1); // 不能编译
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>str.add(1); // 不能编译</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>类型安全的读取数据…</p>
 
 <p>当我们在使用List<string>对象时，它总能保证我们得到的是一个String对象：</string></p>
 
-<p>{% codeblock %}
-String myString = str.get(0);
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>String myString = str.get(0);</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h4 id="section-2">遍历</h4>
 <p>类库中的很多类，诸如Iterator<t>，功能都有所增强，被泛型化。List<t>接口里的iterator()方法现在返回的是Iterator<t>，由它的T next()方法返回的对象不需要再进行类型转换，你直接得到正确的类型。</t></t></t></p>
 
-<p>{% codeblock %}
-for (Iterator<string> iter = str.iterator(); iter.hasNext();) {
-    String s = iter.next();
-    System.out.print(s);
-}</string></p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for (Iterator&lt;string> iter = str.iterator(); iter.hasNext();) {
+</span><span class='line'>    String s = iter.next();
+</span><span class='line'>    System.out.print(s);
+</span><span class='line'>}&lt;/string>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h4 id="foreach">使用foreach</h4>
 <p>“for each”语法同样受益于泛型。前面的代码可以写出这样：
-{% codeblock %}
-for (String s: str) {
-    System.out.print(s);
-}
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for (String s: str) {
+</span><span class='line'>    System.out.print(s);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这样既容易阅读也容易维护。
 ####自动封装(Autoboxing)和自动拆封(Autounboxing)</p>
 
 <p>在使用Java泛型时，autoboxing/autounboxing这两个特征会被自动的用到，就像下面的这段代码：</p>
 
-<p>{% codeblock %}
-List<integer> ints = new ArrayList<integer>();
-ints.add(0);
-ints.add(1);</integer></integer></p>
-
-<p>int sum = 0;
-for (int i : ints) {
-    sum += i;
-}</p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;integer> ints = new ArrayList&lt;integer>();
+</span><span class='line'>ints.add(0);
+</span><span class='line'>ints.add(1);&lt;/integer>&lt;/integer>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>int sum = 0;
+</span><span class='line'>for (int i : ints) {
+</span><span class='line'>    sum += i;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>然而，你要明白的一点是，封装和解封会带来性能上的损失，所有，通用要谨慎的使用。</p>
 
 <h4 id="section-3">子类型</h4>
 
 <p>在Java中，跟其它具有面向对象类型的语言一样，类型的层级可以被设计成这样：
-{% img http://wkee.net/qee/wordpress/wp-content/uploads/2011/06/type-hierarchy.png %}</p>
+<img src="http://wkee.net/qee/wordpress/wp-content/uploads/2011/06/type-hierarchy.png"></p>
 
 <p>在Java中，类型T的子类型既可以是类型T的一个扩展，也可以是类型T的一个直接或非直接实现(如果T是一个接口的话)。因为“成为某类型的子类型”是一个具有传递性质的关系，如果类型A是B的一个子类型，B是C的子类型，那么A也是C的子类型。在上面的图中：</p>
 
@@ -167,11 +186,14 @@ for (int i : ints) {
 
 <p>B类型的任何一个子类型A都可以被赋给一个类型B的声明：</p>
 
-<p>{% codeblock %}
-Apple a = …;
-Fruit f = a;</p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Apple a = …;
+</span><span class='line'>Fruit f = a;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h4 id="section-4">泛型类型的子类型</h4>
 
@@ -179,28 +201,30 @@ Fruit f = a;</p>
 答案会出乎你的意料：没有任何关系。用更通俗的话，泛型类型跟其是否子类型没有任何关系。
 这意味着下面的这段代码是无效的：</p>
 
-<p>{% codeblock %}
-List<apple> apples = ...;
-List<fruit> fruits = apples;
-{% endcodeblock %}</fruit></apple></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;apple> apples = ...;
+</span><span class='line'>List&lt;fruit> fruits = apples;</span></code></pre></td></tr></table></div></figure></notextile></div></fruit></apple></p>
 
 <p>下面的同样也不允许：</p>
 
-<p>{% codeblock %}
-List<apple> apples;
-List<fruit> fruits = ...;
-apples = fruits;
-{% endcodeblock %}</fruit></apple></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;apple> apples;
+</span><span class='line'>List&lt;fruit> fruits = ...;
+</span><span class='line'>apples = fruits;</span></code></pre></td></tr></table></div></figure></notextile></div></fruit></apple></p>
 
 <p>为什么？一个苹果是一个水果，为什么一箱苹果不能是一箱水果？</p>
 
 <p>在某些事情上，这种说法可以成立，但在类型(类)封装的状态和操作上不成立。如果把一箱苹果当成一箱水果会发生什么情况？</p>
 
-<p>{% codeblock %}
-List apples = …;
-List fruits = apples;
-fruits.add(new Strawberry());
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List apples = …;
+</span><span class='line'>List fruits = apples;
+</span><span class='line'>fruits.add(new Strawberry());</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>如果可以这样的话，我们就可以在list里装入各种不同的水果子类型，这是绝对不允许的。</p>
 
@@ -209,18 +233,19 @@ fruits.add(new Strawberry());
 
 <p>应该不是个大问题。而程序员对此感到意外的最大原因是数组和泛型类型上用法的不一致。对于泛型类型，它们和类型的子类型之间是没什么关系的。而对于数组，它们和子类型是相关的：如果类型A是类型B的子类型，那么A[]是B[]的子类型：</p>
 
-<p>{% codeblock %}
-Apple[] apples = …;
-Fruit[] fruits = apples;
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Apple[] apples = …;
+</span><span class='line'>Fruit[] fruits = apples;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>可是稍等一下！如果我们把前面的那个议论中暴露出的问题放在这里，我们仍然能够在一个apple类型的数组中加入strawberrie(草莓)对象：</p>
 
-<p>{% codeblock %}
-Apple[] apples = new Apple[1];
-Fruit[] fruits = apples;
-fruits[0] = new Strawberry();
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Apple[] apples = new Apple[1];
+</span><span class='line'>Fruit[] fruits = apples;
+</span><span class='line'>fruits[0] = new Strawberry();</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这样写真的可以编译，但是在运行时抛出ArrayStoreException异常。因为数组的这特点，在存储数据的操作上，Java运行时需要检查类型的兼容性。这种检查，很显然，会带来一定的性能问题，你需要明白这一点。</p>
 
@@ -228,9 +253,8 @@ fruits[0] = new Strawberry();
 
 <p>现在估计你会感到很奇怪，为什么在数组上会有这种类型和子类型的关系，我来给你一个《Java Generics and Collections》这本书上给出的答案：如果它们不相关，你就没有办法把一个未知类型的对象数组传入一个方法里(不经过每次都封装成Object[])，就像下面的：</p>
 
-<p>{% codeblock %}
-void sort(Object[] o);
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>void sort(Object[] o);</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>泛型出现后，数组的这个个性已经不再有使用上的必要了(下面一部分我们会谈到这个)，实际上是应该避免使用。</p>
 
@@ -245,21 +269,24 @@ void sort(Object[] o);
 
 <p>为了完成这种操作，我们需要使用带有通配符的扩展声明，就像下面的例子里那样：</p>
 
-<p>{% codeblock %}
-List<apple> apples = new ArrayList<apple>();
-List&lt;? extends Fruit&gt; fruits = apples;</apple></apple></p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;apple> apples = new ArrayList&lt;apple>();
+</span><span class='line'>List&lt;? extends Fruit&gt; fruits = apples;&lt;/apple>&lt;/apple>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>“? extends”是泛型类型的子类型相关性成为现实：Apple是Fruit的子类型，List<apple> 是 List&lt;? extends Fruit&gt; 的子类型。
 ####向下造型一个泛型对象的引用</apple></p>
 
 <p>现在我来介绍另外一种通配符：<code>? super</code> 。如果类型B是类型A的超类型(父类型)，那么 <code>C&lt;B&gt;</code> 是 <code>C&lt;? super A&gt;</code> 的子类型：</p>
 
-<p>{% codeblock %}
-List<fruit> fruits = new ArrayList<fruit>();
-List&lt;? super Apple&gt; = fruits;
-{% endcodeblock %}</fruit></fruit></p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;fruit> fruits = new ArrayList&lt;fruit>();
+</span><span class='line'>List&lt;? super Apple&gt; = fruits;</span></code></pre></td></tr></table></div></figure></notextile></div></fruit></fruit></p>
 
 <p><br /><strong>为什么使用通配符标记能行得通？</strong></p>
 
@@ -269,61 +296,70 @@ List&lt;? super Apple&gt; = fruits;
 
 <p>让我们重新看看这第二部分使用的一个例子，其中谈到了Java数组的子类型相关性：</p>
 
-<p>{% codeblock %}
-Apple[] apples = new Apple[1];
-Fruit[] fruits = apples;
-fruits[0] = new Strawberry();
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Apple[] apples = new Apple[1];
+</span><span class='line'>Fruit[] fruits = apples;
+</span><span class='line'>fruits[0] = new Strawberry();</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>就像我们看到的，当你往一个声明为Fruit数组的Apple对象数组里加入Strawberry对象后，代码可以编译，但在运行时抛出异常。</p>
 
 <p>现在我们可以使用通配符把相关的代码转换成泛型：因为Apple是Fruit的一个子类，我们使用? extends 通配符，这样就能将一个 <code>List&lt;Apple&gt;</code> 对象的定义赋到一个 <code>List&lt;? extends Fruit&gt;</code> 的声明上：</p>
 
-<p>{% codeblock %}
-List<apple> apples = new ArrayList<apple>();
-List&lt;? extends Fruit&gt; fruits = apples;
-fruits.add(new Strawberry());</apple></apple></p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;apple> apples = new ArrayList&lt;apple>();
+</span><span class='line'>List&lt;? extends Fruit&gt; fruits = apples;
+</span><span class='line'>fruits.add(new Strawberry());&lt;/apple>&lt;/apple>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>这次，代码就编译不过去了！Java编译器会阻止你往一个Fruit list里加入strawberry。在编译时我们就能检测到错误，在运行时就不需要进行检查来确保往列表里加入不兼容的类型了。即使你往list里加入Fruit对象也不行：</p>
 
-<p>{% codeblock %}</p>
-
-<p>fruits.add(new Fruit());
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>fruits.add(new Fruit());</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>你没有办法做到这些。事实上你不能够往一个使用了? extends的数据结构里写入任何的值。</p>
 
 <p>原因非常的简单，你可以这样想：这个? extends T 通配符告诉编译器我们在处理一个类型T的子类型，但我们不知道这个子类型究竟是什么。因为没法确定，为了保证类型安全，我们就不允许往里面加入任何这种类型的数据。另一方面，因为我们知道，不论它是什么类型，它总是类型T的子类型，当我们在读取数据时，能确保得到的数据是一个T类型的实例：</p>
 
-<p>{% codeblock %}
-Fruit get = fruits.get(0);
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Fruit get = fruits.get(0);</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h4 id="super">? super</h4>
 
 <p>使用 ? super 通配符一般是什么情况？让我们先看看这个：</p>
 
-<p>{% codeblock %}
-List<fruit> fruits = new ArrayList<fruit>();
-List&lt;? super Apple&gt; = fruits;</fruit></fruit></p>
-
-<p>{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>List&lt;fruit> fruits = new ArrayList&lt;fruit>();
+</span><span class='line'>List&lt;? super Apple&gt; = fruits;&lt;/fruit>&lt;/fruit>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>我们看到fruits指向的是一个装有Apple的某种超类(supertype)的List。同样的，我们不知道究竟是什么超类，但我们知道Apple和任何Apple的子类都跟它的类型兼容。既然这个未知的类型即是Apple，也是GreenApple的超类，我们就可以写入：</p>
 
-<p>{% codeblock %}
-fruits.add(new Apple());
-fruits.add(new GreenApple());
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>fruits.add(new Apple());
+</span><span class='line'>fruits.add(new GreenApple());</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>如果我们想往里面加入Apple的超类，编译器就会警告你：</p>
 
-<p>{% codeblock %}
-fruits.add(new Fruit());
-fruits.add(new Object());
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>fruits.add(new Fruit());
+</span><span class='line'>fruits.add(new Object());</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>因为我们不知道它是怎样的超类，所有这样的实例就不允许加入。</p>
 

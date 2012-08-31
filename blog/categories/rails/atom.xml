@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rails | Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-08-31T17:21:25+08:00</updated>
+  <updated>2012-08-31T17:28:06+08:00</updated>
   <id>http://jonnyzheng.github.com/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -40,14 +40,14 @@
 
 <p>```ruby
 # model class
-# 定义了attr_accessor coords
+# define attr_accessor coords
 class User &lt; ActiveRecord::Base
   attr_accessor :coords
   mount_uploader :icon, AvatarUploader
 end</p>
 
 <h1 id="controller">controller</h1>
-<p># 将参数传递给 @user.coords
+<p># pass the params to @user.coords
 def crop_icon
   @user.coords = params[:coords]
   @user.icon = File.open(path)
@@ -56,8 +56,8 @@ def crop_icon
 end</p>
 
 <h1 id="uploader">Uploader</h1>
-<p># 这里的model就是controller里@user实例,
-# 在process 方法中是可以调用到的
+<p># the model in the function is same as @user in controll,
+# and can be invoked inside of process method 
  def crop_area
     manipulate! do |img|
       unless model.coords.nil?

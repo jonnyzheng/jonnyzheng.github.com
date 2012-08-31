@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-08-31T17:21:25+08:00</updated>
+  <updated>2012-08-31T17:28:06+08:00</updated>
   <id>http://jonnyzheng.github.com/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -20,26 +20,42 @@
     <id>http://jonnyzheng.github.com/blog/2011/06/12/mysql--xin-ban-ben-bian-yi-can-shu</id>
     <content type="html"><![CDATA[<p>新版本的mysql 使用了CMAKE作为编译工具，不论这种方法的优缺点，先上编译参数：</p>
 
-<p>{% codeblock %}
-cmake . \
--DCMAKE_BUILD_TYPE:STRING=Release \
--DCMAKE_INSTALL_PREFIX:PATH=/usr/local/mysql \
--DDEFAULT_CHARSET:STRING=utf8 \
--DDEFAULT_COLLATION:STRING=utf8_general_ci \
--DWITH_INNOBASE_STORAGE_ENGINE=1 \
--DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
--DCOMMUNITY_BUILD:BOOL=ON \
--DENABLED_PROFILING:BOOL=ON \
--DENABLE_DEBUG_SYNC:BOOL=OFF \
--DINSTALL_LAYOUT:STRING=STANDALONE \
--DMYSQL_MAINTAINER_MODE:BOOL=OFF \
--DWITH_EMBEDDED_SERVER:BOOL=ON \
--DWITH_EXTRA_CHARSETS:STRING=all \
--DWITH_SSL:STRING=bundled \
--DWITH_UNIT_TESTS:BOOL=OFF \
--DWITH_ZLIB:STRING=bundled \
--LH
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cmake . \
+</span><span class='line'>-DCMAKE_BUILD_TYPE:STRING=Release \
+</span><span class='line'>-DCMAKE_INSTALL_PREFIX:PATH=/usr/local/mysql \
+</span><span class='line'>-DDEFAULT_CHARSET:STRING=utf8 \
+</span><span class='line'>-DDEFAULT_COLLATION:STRING=utf8_general_ci \
+</span><span class='line'>-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+</span><span class='line'>-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
+</span><span class='line'>-DCOMMUNITY_BUILD:BOOL=ON \
+</span><span class='line'>-DENABLED_PROFILING:BOOL=ON \
+</span><span class='line'>-DENABLE_DEBUG_SYNC:BOOL=OFF \
+</span><span class='line'>-DINSTALL_LAYOUT:STRING=STANDALONE \
+</span><span class='line'>-DMYSQL_MAINTAINER_MODE:BOOL=OFF \
+</span><span class='line'>-DWITH_EMBEDDED_SERVER:BOOL=ON \
+</span><span class='line'>-DWITH_EXTRA_CHARSETS:STRING=all \
+</span><span class='line'>-DWITH_SSL:STRING=bundled \
+</span><span class='line'>-DWITH_UNIT_TESTS:BOOL=OFF \
+</span><span class='line'>-DWITH_ZLIB:STRING=bundled \
+</span><span class='line'>-LH</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>具体可参考 <a href="http://forge.mysql.com/wiki/CMake">http://forge.mysql.com/wiki/CMake</a></p>
 
@@ -56,9 +72,8 @@ cmake . \
 
 <p>要查询一个用户属于id为2分类的用户可以这么写</p>
 
-<p>{% codeblock %}
-select * from <code>user</code> where find_in_set(‘2’,<code>user</code>.<code>category</code>)
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>select * from &lt;code>user&lt;/code> where find_in_set(‘2’,&lt;code>user&lt;/code>.&lt;code>category&lt;/code>)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>具体find_in_set 的使用请参照手册</p>
 
@@ -68,32 +83,40 @@ select * from <code>user</code> where find_in_set(‘2’,<code>user</code>.<cod
 
 <p>于是做了个测试，user 表录入 100万的数据，同时建立 user_category 表，每个user有 3 个分类，那么category表里有300万条记录。</p>
 
-<p>{% codeblock [lang:sql]%}
-CREATE TABLE <code>user_category</code> (
- <code>id</code> int(11) NOT NULL AUTO_INCREMENT,
- <code>user_id</code> int(11) DEFAULT NULL,
- <code>category_id</code> int(11) DEFAULT NULL,
- PRIMARY KEY (<code>id</code>),
- KEY <code>category_id</code> (<code>category_id</code>),
- KEY <code>user_id</code> (<code>tax_id</code>)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT 
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>[]</span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">user_category</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span> <span class="p">(</span>
+</span><span class='line'> <span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+</span><span class='line'> <span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">user_id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'> <span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">category_id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="p">),</span>
+</span><span class='line'> <span class="k">KEY</span> <span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">category_id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">category_id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="p">),</span>
+</span><span class='line'> <span class="k">KEY</span> <span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">user_id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">tax_id</span><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="n">AUTO_INCREMENT</span><span class="o">=</span><span class="mi">1</span> <span class="k">DEFAULT</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>现在比较一下在百万级的数据量上使用 join 链接外键查询和find_in_set查询的性能</p>
 
 <h5 id="findinset-22">使用 find_in_set 查询，平均时间在2.2秒左右</h5>
 
-<p>{% codeblock %}
-SELECT SQL_NO_CACHE COUNT(*) FROM <code>user</code> WHERE FIND_IN_SET(65,category)
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT SQL_NO_CACHE COUNT(*) FROM &lt;code>user&lt;/code> WHERE FIND_IN_SET(65,category)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h5 id="left-join--02">使用left join ， 使用了右表中的索引，平均时间在0.2秒左右</h5>
 
-<p>{% codeblock %}
-SELECT SQL_NO_CACHE COUNT(DISTINCT(<code>user</code>.id)) FROM <code>user</code>
-LEFT JOIN <code>user_category</code> ON <code>user</code>.<code>id</code>= <code>user_category</code>.<code>user_id</code>
-WHERE <code>user_category</code>.<code>category_id</code>=75
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT SQL_NO_CACHE COUNT(DISTINCT(&lt;code>user&lt;/code>.id)) FROM &lt;code>user&lt;/code>
+</span><span class='line'>LEFT JOIN &lt;code>user_category&lt;/code> ON &lt;code>user&lt;/code>.&lt;code>id&lt;/code>= &lt;code>user_category&lt;/code>.&lt;code>user_id&lt;/code>
+</span><span class='line'>WHERE &lt;code>user_category&lt;/code>.&lt;code>category_id&lt;/code>=75</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>所以在大数据量的情况下还是不适合用find_in_set, 不过有些表的数据可能永远就那么点数据，这个时候为了减少表数量，倒是可以用这样的方法做。</p>
 ]]></content>
