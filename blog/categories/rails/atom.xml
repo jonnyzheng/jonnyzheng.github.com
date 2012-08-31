@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rails | Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-08-31T15:48:31+08:00</updated>
+  <updated>2012-08-31T17:21:25+08:00</updated>
   <id>http://jonnyzheng.github.com/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -12,6 +12,67 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[carrierwave uploader 中传递变量]]></title>
+    <link href="http://jonnyzheng.github.com/blog/2012/08/31/carrierwave-pass-params/"/>
+    <updated>2012-08-31T16:29:00+08:00</updated>
+    <id>http://jonnyzheng.github.com/blog/2012/08/31/carrierwave-pass-params</id>
+    <content type="html"><![CDATA[<p>在carrierwave uploader中经常会用到version的功能，一般我们的写法都是在里面写死process的一些参数，比如</p>
+
+<p><code>ruby
+  version :small do
+    process :resize_to_fill =&gt; [48,48]
+  end
+</code></p>
+
+<p>但是有的时候可能我们需要动态的传递一些参数进来对图片做相应的操作，比如用户在前端选择图片的头像区域，然后传到后台进行切割，这个时候需要加一个process方法, 下面的crop_area方法通过参数来截取图片中对应的区域。</p>
+
+<p><code>ruby
+ def crop_area
+    manipulate! do |img|
+      ...
+    end
+  end
+</code></p>
+
+<p>但是参数如何传进来成了问题，起初我是在 Uploader里定义了一个可访问的变量,然后在controller里将参数传递给Uploader实例，结果在crop_area里根本就访问不到Uploader里的实例变量，后来看了下源码发现carrierwave的实现逻辑貌似不能用这样的方法。于是用了一个曲线救国的方法，通过Model来传递参数：</p>
+
+<p>```ruby
+# model class
+# 定义了attr_accessor coords
+class User &lt; ActiveRecord::Base
+  attr_accessor :coords
+  mount_uploader :icon, AvatarUploader
+end</p>
+
+<h1 id="controller">controller</h1>
+<p># 将参数传递给 @user.coords
+def crop_icon
+  @user.coords = params[:coords]
+  @user.icon = File.open(path)
+  @user.save
+  redirect_to :action=&gt; ‘basic’
+end</p>
+
+<h1 id="uploader">Uploader</h1>
+<p># 这里的model就是controller里@user实例,
+# 在process 方法中是可以调用到的
+ def crop_area
+    manipulate! do |img|
+      unless model.coords.nil?
+        coords = JSON.parse(model.coords)
+        img.crop(“#{coords[‘w’]}x#{coords[‘h’]}+#{coords[‘x’]}+#{coords[‘y’]}”)
+      end
+      img = yield(img) if block_given?
+      img
+    end
+  end
+```</p>
+
+<p>所以最后通过在 Model 中设置实例变量解决动态传递参数的问题。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rails 源码学习 1 (Rails 的初始化过程) ]]></title>

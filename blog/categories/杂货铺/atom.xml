@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 杂货铺 | Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.com/blog/categories/杂货铺/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-08-31T15:48:31+08:00</updated>
+  <updated>2012-08-31T17:21:25+08:00</updated>
   <id>http://jonnyzheng.github.com/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -21,14 +21,16 @@
     <content type="html"><![CDATA[<p>最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。</p>
 
 <p>sublime支持文本编辑使用 vim 模式，vim 快捷键编辑文本还是挺快的，两个编辑器融合一下也挺好，选择Preferences-&gt;Settings- Default, 在文本的最下面有一行 
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>“ignored_packages”: [“vintage”]</span></code></pre></td></tr></table></div></figure></notextile></div>
+{% codeblock %}
+“ignored_packages”: [“vintage”]
+{% endcodeblock %}
  ，这里sublime 默认去掉了vim的支持，我们只需要把”vintage”删掉就好了。</p>
 
 <p>再在编辑框里试试已经ok了，但是在vim里我都把ESC键映射到了’ii’上了： imap ‘ii’ <esc> ，这里并不支持imap。 不过我们可以在vintage 的package包里自己定义，我的机器是windows,默认packages都装在了 C:\Documents and Settings\zhengj1\Application Data\Sublime Text 2\Packages 目录下，找到Vintage\Default.sublime-keymap文件，用文本编辑器打开，加上下面的代码：</esc></p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>“ignored_packages”: [“vintage”]</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock %}
+“ignored_packages”: [“vintage”]
+{% endcodeblock %}</p>
 
 <p>这个keymap文件里可以定义自己习惯的快捷键方式，有兴趣的不妨研究研究。</p>
 
@@ -45,37 +47,25 @@
 
 <p>于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。调试了一会貌似不是我代码的原因，于是到JSTree的源码里看看，结果看到下面这一句，他计算的事件点击在页面的position要在node的li高度范围内，这个不知道为啥要这样做，很是奇怪，但是这就是为什么在iframe里会出怪问题的原因。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>if(trgt.is(“ins”) &amp;&amp; event.pageY - trgt.offset().top &lt; this.data.core.li_height)
-</span><span class='line'>{
-</span><span class='line'>    this.toggle_node(trgt);
-</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock %}
+if(trgt.is(“ins”) &amp;&amp; event.pageY - trgt.offset().top &lt; this.data.core.li_height)
+{
+    this.toggle_node(trgt);
+}
+{% endcodeblock %}</p>
 
 <p>在ie下面当右边滚动条滚动后$(element).offset().top计算出来的值就不对了，必须要加document.documentElement.scrollTop 的值才能得到正确的结果，迫不得已，修补bug如下</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>var posY = 0;
-</span><span class='line'>if(window.parent!= window &amp;&amp; $.browser.msie)
-</span><span class='line'>    posY= (trgt.offset().top+document.documentElement.scrollTop);
-</span><span class='line'>else
-</span><span class='line'>    posY= trgt.offset().top;
-</span><span class='line'>if(trgt.is(“ins”) &amp;&amp; event.pageY - posY &lt; this.data.core.li_height) { this.toggle_node(trgt); }&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock %}</p>
+
+<p>var posY = 0;
+if(window.parent!= window &amp;&amp; $.browser.msie)
+    posY= (trgt.offset().top+document.documentElement.scrollTop);
+else
+    posY= trgt.offset().top;
+if(trgt.is(“ins”) &amp;&amp; event.pageY - posY &lt; this.data.core.li_height) { this.toggle_node(trgt); }</p>
+
+<p>{% endcodeblock %}</p>
 
 <p>Jquery里也有人提到这个问题，新版的JSTree里已经修复此bug， 附上地址供参考</p>
 ]]></content>
@@ -94,61 +84,41 @@
 
 <p>即使rebase命令已经干掉了上一次push到现在的所有提交记录但是在本地文件里还是有相关信息的，找到项目目录下的git文件 .git\logs\refs\heads\branchname, 打开来看看</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>0000000000000000000000000000000000000000 f7f3b11f66b709dcd93e1c15825270dce90adc5e jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314676889 +0800	branch: Created from HEAD&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>f7f3b11f66b709dcd93e1c15825270dce90adc5e 74173c185de3ce5ee846bc7e0326481276372071 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314682422 +0800	commit (amend): init&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>74173c185de3ce5ee846bc7e0326481276372071 93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314682760 +0800	commit (merge): Merge branch ‘b3.3’ of 10.123.4.212:/opt/git/jolnet into b3.3&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 9273c7dbd497d070ebd8704f284444f658666954 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314772033 +0800	commit: 1&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>9273c7dbd497d070ebd8704f284444f658666954 9530c1ca1730ab1c249d3c301817bd037b3f6773 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314786503 +0800	commit: daily check in&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>9530c1ca1730ab1c249d3c301817bd037b3f6773 c91bb413528815321b10929d9cd26480de64f3bf jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314787003 +0800	commit (amend): daily check in&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>c91bb413528815321b10929d9cd26480de64f3bf 3006dced1c8d39108483927bd5cc1e9ee4d1ec05 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788056 +0800	3006dced1c8d39108483927bd5cc1e9ee4d1ec05: updating HEAD&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>3006dced1c8d39108483927bd5cc1e9ee4d1ec05 813acf5e60bc0d2e64c9682fe7498dc79606e1e1 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788446 +0800	813acf5e60bc0d2e64c9682fe7498dc79606e1e1: updating HEAD&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>813acf5e60bc0d2e64c9682fe7498dc79606e1e1 ada2680266b192a0ebf8d4a43ca8ca4812aadc78 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788695 +0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78: updating HEAD&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p>ada2680266b192a0ebf8d4a43ca8ca4812aadc78 a259bcff43cc726be011efbbeb5975ffafb87ee5 jonny &lt;a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;&lt;/a> 1314788871 +0800	commit: rebase&lt;/p>
-</span><span class='line'>
-</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock %}
+0000000000000000000000000000000000000000 f7f3b11f66b709dcd93e1c15825270dce90adc5e jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314676889 +0800	branch: Created from HEAD</p>
+
+<p>f7f3b11f66b709dcd93e1c15825270dce90adc5e 74173c185de3ce5ee846bc7e0326481276372071 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314682422 +0800	commit (amend): init</p>
+
+<p>74173c185de3ce5ee846bc7e0326481276372071 93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314682760 +0800	commit (merge): Merge branch ‘b3.3’ of 10.123.4.212:/opt/git/jolnet into b3.3</p>
+
+<p>93ba66f74b9e11ed8acae3e6ddd1159be1ff9ef4 9273c7dbd497d070ebd8704f284444f658666954 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314772033 +0800	commit: 1</p>
+
+<p>9273c7dbd497d070ebd8704f284444f658666954 9530c1ca1730ab1c249d3c301817bd037b3f6773 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314786503 +0800	commit: daily check in</p>
+
+<p>9530c1ca1730ab1c249d3c301817bd037b3f6773 c91bb413528815321b10929d9cd26480de64f3bf jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314787003 +0800	commit (amend): daily check in</p>
+
+<p>c91bb413528815321b10929d9cd26480de64f3bf 3006dced1c8d39108483927bd5cc1e9ee4d1ec05 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314788056 +0800	3006dced1c8d39108483927bd5cc1e9ee4d1ec05: updating HEAD</p>
+
+<p>3006dced1c8d39108483927bd5cc1e9ee4d1ec05 813acf5e60bc0d2e64c9682fe7498dc79606e1e1 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314788446 +0800	813acf5e60bc0d2e64c9682fe7498dc79606e1e1: updating HEAD</p>
+
+<p>813acf5e60bc0d2e64c9682fe7498dc79606e1e1 ada2680266b192a0ebf8d4a43ca8ca4812aadc78 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314788695 +0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78: updating HEAD</p>
+
+<p>ada2680266b192a0ebf8d4a43ca8ca4812aadc78 a259bcff43cc726be011efbbeb5975ffafb87ee5 jonny <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;">&#106;&#111;&#110;&#110;&#121;&#046;&#122;&#104;&#101;&#110;&#103;&#064;&#108;&#101;&#120;&#105;&#115;&#110;&#101;&#120;&#105;&#115;&#046;&#099;&#111;&#109;</a> 1314788871 +0800	commit: rebase</p>
+
+<p>{% endcodeblock %}</p>
 
 <p>最后一行是rebase的操作，我只要新建个分支在里面找回前一行commit的代码就可以了。</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>git checkout -b my_recovery 0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+<p>{% codeblock %}
+git checkout -b my_recovery 0800	ada2680266b192a0ebf8d4a43ca8ca4812aadc78
+{% endcodeblock %}</p>
 
 <p>方法2（这个更简单）
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>git reflog
-</span><span class='line'># Suppose the old commit was HEAD@{5} in the ref log
-</span><span class='line'>git reset –hard HEAD@{5}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+{% codeblock %}
+git reflog
+# Suppose the old commit was HEAD@{5} in the ref log
+git reset –hard HEAD@{5}
+{% endcodeblock %}</p>
 
 <p>终于找回了丢失的代码，可以不用重写一遍了，而且学到了很有用的解决方法，看来犯错也不都是坏事。</p>
 
@@ -179,10 +149,10 @@ putty 是用来连接远程linux server的客户端，putty-key-Generator是用�
 RSAAuthentication yes
 编辑 用户目录下.ssh/authorized_keys, 把第一步生成好的公钥替换掉原来的。
 修改权限：
-<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>chmod 700 .ssh
-</span><span class='line'>chmod 600 .ssh/authorized_keys</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+{% codeblock %}
+chmod 700 .ssh
+chmod 600 .ssh/authorized_keys
+{% endcodeblock %}</p>
   </li>
   <li>
     <p>windows端进行连接
