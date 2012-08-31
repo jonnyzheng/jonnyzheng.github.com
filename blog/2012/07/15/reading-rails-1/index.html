@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Rails 源码学习 1 (Rails 的初始化过程)  - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="rails bin 文件
+在rails 项目的目录里运行命令就会看到rails命令的路径/usr/bin/rails，其实是一个ruby文件，可以用编辑器打开看看： 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+#!/ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.com/blog/2012/07/15/reading-rails-1/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails 源码学习 1 (Rails 的初始化过程)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-15T15:27:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2 id="rails-bin-">rails bin 文件</h2>
+<p>在rails 项目的目录里运行命令就会看到rails命令的路径<code>/usr/bin/rails</code>，其实是一个ruby文件，可以用编辑器打开看看：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># This file was generated by RubyGems.</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># The application &#39;railties&#39; is installed as part of a gem, and</span>
+</span><span class="line"><span class="c1"># this file is here to facilitate running it.</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">version</span> <span class="o">=</span> <span class="s2">&quot;&gt;= 0&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="no">ARGV</span><span class="o">.</span><span class="n">first</span>
+</span><span class="line">  <span class="n">str</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">.</span><span class="n">first</span>
+</span><span class="line">  <span class="n">str</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">dup</span><span class="o">.</span><span class="n">force_encoding</span><span class="p">(</span><span class="s2">&quot;BINARY&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">str</span><span class="o">.</span><span class="n">respond_to?</span> <span class="ss">:force_encoding</span>
+</span><span class="line">  <span class="nb">p</span> <span class="n">str</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">str</span> <span class="o">=~</span> <span class="sr">/\A_(.*)_\z/</span>
+</span><span class="line">    <span class="n">version</span> <span class="o">=</span> <span class="vg">$1</span>
+</span><span class="line">    <span class="no">ARGV</span><span class="o">.</span><span class="n">shift</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;railties&#39;</span><span class="p">,</span> <span class="n">version</span>
+</span><span class="line"><span class="nb">load</span> <span class="no">Gem</span><span class="o">.</span><span class="n">bin_path</span><span class="p">(</span><span class="s1">&#39;railties&#39;</span><span class="p">,</span> <span class="s1">&#39;rails&#39;</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>该文件做的事情主要是 <code>require rubygems</code>, 然后最后一行 load railties下面的rails，我们可以打印一下到底load了什么东西：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">p</span> <span class="no">Gem</span><span class="o">.</span><span class="n">bin_path</span><span class="p">(</span><span class="s1">&#39;railties&#39;</span><span class="p">,</span> <span class="s1">&#39;rails&#39;</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+</span><span class="line"><span class="c1"># will out put /*/*/ruby-1.9.3-p194/gems/railties-3.2.7/bin/rails</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>然后就去看看 <code>railties-3.2.7/bin/rails</code> 里面都有什么吧，路径中的版本号只是我自己机器上使用的版本，可能和其他人的不一样，所以下面都会把路径中的版本号去掉。</p>
+
+<h2 id="railtiesbinrails">railties/bin/rails</h2>
+
+<p>这里面也很简单，基本上只是设置环境，</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../..&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;.git&#39;</span><span class="p">))</span>
+</span><span class="line">  <span class="n">railties_path</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../lib&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class="line">  <span class="vg">$:</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="n">railties_path</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line"><span class="nb">require</span> <span class="s2">&quot;rails/cli&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>最后require了 <code>railties/lib/rails/cli.rb</code> 这个文件:</p>
+
+<h2 id="railtieslibrailsclirb">railties/lib/rails/cli.rb</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;rbconfig&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rails/script_rails_loader&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># If we are inside a Rails application this method performs an exec and thus</span>
+</span><span class="line"><span class="c1"># the rest of this script is not run.</span>
+</span><span class="line"><span class="no">Rails</span><span class="o">::</span><span class="no">ScriptRailsLoader</span><span class="o">.</span><span class="n">exec_script_rails!</span>
+</span><span class="line">
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rails/ruby_version_check&#39;</span>
+</span><span class="line"><span class="no">Signal</span><span class="o">.</span><span class="n">trap</span><span class="p">(</span><span class="s2">&quot;INT&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="nb">puts</span><span class="p">;</span> <span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="no">ARGV</span><span class="o">.</span><span class="n">first</span> <span class="o">==</span> <span class="s1">&#39;plugin&#39;</span>
+</span><span class="line">  <span class="no">ARGV</span><span class="o">.</span><span class="n">shift</span>
+</span><span class="line">  <span class="nb">require</span> <span class="s1">&#39;rails/commands/plugin_new&#39;</span>
+</span><span class="line"><span class="k">else</span>
+</span><span class="line">  <span class="nb">require</span> <span class="s1">&#39;rails/commands/application&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>第一行的rbconfig是ruby standlib, 可以用来知道当前环境ruby的path，第二行引用的就是rails的装载脚本了，下面的 <code>Rails::ScriptRailsLoader.exec_script_rails!</code> 方法就是在里面定义的</p>
+
+<h2 id="railtieslibrailsscriptrailsloaderrb">railties/lib/rails/script_rails_loader.rb</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">Rails</span>
+</span><span class="line">  <span class="k">module</span> <span class="nn">ScriptRailsLoader</span>
+</span><span class="line">    <span class="no">RUBY</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="no">RbConfig</span><span class="o">::</span><span class="no">CONFIG</span><span class="o">.</span><span class="n">values_at</span><span class="p">(</span><span class="s2">&quot;bindir&quot;</span><span class="p">,</span> <span class="s2">&quot;ruby_install_name&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="no">RbConfig</span><span class="o">::</span><span class="no">CONFIG</span><span class="o">[</span><span class="s2">&quot;EXEEXT&quot;</span><span class="o">]</span>
+</span><span class="line">    <span class="no">SCRIPT_RAILS</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="s1">&#39;rails&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">exec_script_rails!</span>
+</span><span class="line">      <span class="n">cwd</span> <span class="o">=</span> <span class="no">Dir</span><span class="o">.</span><span class="n">pwd</span>
+</span><span class="line">      <span class="k">return</span> <span class="k">unless</span> <span class="n">in_rails_application?</span> <span class="o">||</span> <span class="n">in_rails_application_subdirectory?</span>
+</span><span class="line">      <span class="nb">exec</span> <span class="no">RUBY</span><span class="p">,</span> <span class="no">SCRIPT_RAILS</span><span class="p">,</span> <span class="o">*</span><span class="no">ARGV</span> <span class="k">if</span> <span class="n">in_rails_application?</span>
+</span><span class="line">	  <span class="o">.</span><span class="n">.</span><span class="o">.</span>	
+</span><span class="line">    <span class="k">rescue</span> <span class="no">SystemCallError</span>
+</span><span class="line">      <span class="c1"># could not chdir, no problem just return</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在 <code>self.exec_script_rails</code> 方法里就是真正的调用rails项目里 <code>script/rails</code> 这个文件啦, 这个文件在每个项目里都有的， 让我们再回到项目里看看这个文件</p>
+
+<h2 id="rails--scriptrails">rails 项目中的 script/rails</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#!/usr/bin/env ruby</span>
+</span><span class="line"><span class="c1"># This command will automatically be run when you run &quot;rails&quot; with Rails 3 gems installed from the root of your application.</span>
+</span><span class="line">
+</span><span class="line"><span class="no">APP_PATH</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../config/application&#39;</span><span class="p">,</span>  <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class="line"><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../config/boot&#39;</span><span class="p">,</span>  <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rails/commands&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>这里require了 项目中的<code>config/boot.rb</code> 文件，它的主要作用是通过Bundle 把Gemfile 里的Gems都引用进来。最后一步 <code>require 'rails/commands'</code> 是真正更具我们输入的命令做执行的地方，比如 <code>rails s</code>,<code>rails c</code>, <code>rails g</code> 都是在这里做的判断。</p>
+
+<h2 id="railtieslibrailscommandsrb">railties/lib/rails/commands.rb</h2>
+
+<p>这里看看 启动server的片段</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">when</span> <span class="s1">&#39;server&#39;</span>
+</span><span class="line">  <span class="c1"># Change to the application&#39;s path if there is no config.ru file in current dir.</span>
+</span><span class="line">  <span class="c1"># This allows us to run script/rails server from other directories, but still get</span>
+</span><span class="line">  <span class="c1"># the main config.ru and properly set the tmp directory.</span>
+</span><span class="line">  <span class="no">Dir</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">,</span> <span class="no">APP_PATH</span><span class="p">))</span> <span class="k">unless</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;config.ru&quot;</span><span class="p">))</span>
+</span><span class="line">
+</span><span class="line">  <span class="nb">require</span> <span class="s1">&#39;rails/commands/server&#39;</span>
+</span><span class="line">  <span class="no">Rails</span><span class="o">::</span><span class="no">Server</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class="p">{</span> <span class="o">|</span><span class="n">server</span><span class="o">|</span>
+</span><span class="line">    <span class="c1"># We need to require application after the server sets environment,</span>
+</span><span class="line">    <span class="c1"># otherwise the --environment option given to the server won&#39;t propagate.</span>
+</span><span class="line">    <span class="nb">require</span> <span class="no">APP_PATH</span>
+</span><span class="line">    <span class="no">Dir</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+</span><span class="line">    <span class="n">server</span><span class="o">.</span><span class="n">start</span>
+</span><span class="line">  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>这里最主要的就是调用了 	<code>rails/commnads/server</code> 该文件里定义了 server.start 方法。</p>
+
+<h2 id="railtieslibrailscommandsserverrb">railties/lib/rails/commands/server.rb</h2>
+
+<p>这个文件里主要是在 initialize的时候设置sever 的一些参数，再就是start</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="k">def</span> <span class="nf">start</span>
+</span><span class="line">      <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:SSLEnable</span><span class="o">]</span> <span class="p">?</span> <span class="s1">&#39;https&#39;</span> <span class="p">:</span> <span class="s1">&#39;http&#39;</span><span class="si">}</span><span class="s2">://</span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:Port</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class="line">      <span class="nb">puts</span> <span class="s2">&quot;=&gt; Booting </span><span class="si">#{</span><span class="no">ActiveSupport</span><span class="o">::</span><span class="no">Inflector</span><span class="o">.</span><span class="n">demodulize</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class="line">      <span class="nb">puts</span> <span class="s2">&quot;=&gt; Rails </span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2"> application starting in </span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2"> on </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class="line">      <span class="nb">puts</span> <span class="s2">&quot;=&gt; Call with -d to detach&quot;</span> <span class="k">unless</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
+</span><span class="line">      <span class="nb">trap</span><span class="p">(</span><span class="ss">:INT</span><span class="p">)</span> <span class="p">{</span> <span class="nb">exit</span> <span class="p">}</span>
+</span><span class="line">      <span class="nb">puts</span> <span class="s2">&quot;=&gt; Ctrl-C to shutdown server&quot;</span> <span class="k">unless</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">      <span class="c1">#Create required tmp directories if not found</span>
+</span><span class="line">      <span class="sx">%w(cache pids sessions sockets)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">dir_to_make</span><span class="o">|</span>
+</span><span class="line">        <span class="no">FileUtils</span><span class="o">.</span><span class="n">mkdir_p</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;tmp&#39;</span><span class="p">,</span> <span class="n">dir_to_make</span><span class="p">))</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">      <span class="k">super</span>
+</span><span class="line">    <span class="k">ensure</span>
+</span><span class="line">      <span class="c1"># The &#39;-h&#39; option calls exit before @options is set.</span>
+</span><span class="line">      <span class="c1"># If we call &#39;options&#39; with it unset, we get double help banners.</span>
+</span><span class="line">      <span class="nb">puts</span> <span class="s1">&#39;Exiting&#39;</span> <span class="k">unless</span> <span class="vi">@options</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>这时你就知道在 <code>rails s</code> 的时候显示的几行文字是从这里打印出来的了，最后他会调用 Rack::Server.start 方法，也就是父类方法.</p>
+
+<h2 id="actionpacklibactiondispatchrb">actionpack/lib/action_dispatch.rb</h2>
+
+<p>在 <code>server.rb</code> 里还require了 <code>action_dispatch</code>，这个文件在 Gem <code>action_pack</code> 目录下,
+文件里引入了大部分rails需要的模块，包括：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;active_support&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;active_support/dependencies/autoload&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;action_pack&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;active_model&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rack&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>接下来就是rack server了</p>
+
+<h2 id="racklibserverrb">rack/lib/server.rb</h2>
+
+<p>rack 提供了统一的最简单的web server和应用程序之间的接口，所有的应用程序和web server都可以基于这个开发，大大节省了工作量和兼容问题，比如 rails 可以在自带的webserver webrick 跑，也可以在unicorn， thin，passanger 等webserver上跑，因为大家都是基于rack做的实现。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-15T15:27:00+08:00" pubdate data-updated="true">Jul 15<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rails/'>rails</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/04/26/git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Previous Post: git 常用命令">&laquo; git 常用命令</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/07/26/probability-chapter1/" title="Next Post: probability chapter1">probability chapter1 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/26/probability-chapter1/">probability chapter1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/15/reading-rails-1/">Rails 源码学习 1 (Rails 的初始化过程) </a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/26/git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">git 常用命令</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/26/git-practice/">git 团队开发实践</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/08/metaprogramming/">metaprogramming learning</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/28/%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E5%BF%83%E7%90%86%E5%AD%A6%E8%AF%BB%E5%90%8E%E5%B0%8F%E7%BB%93/">程序开发心理学读后小结</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

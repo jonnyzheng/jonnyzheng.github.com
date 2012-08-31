@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>程序开发心理学读后小结 - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="之前我从来不知道程序开发还有心理学这回事，后来从摆摆书架上换到了这本书，每天花半小时在地铁上把书看完了，这本40年前写的书对于今天的程序开发依然非常适用，神作啊神作，个人认为其实际指导作用更甚于人月神话。   阅读程序，理解程序的局限性。做为一名程序员我们经常会被离奇古怪的bug搞的焦头烂额， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.com/blog/2012/02/28/%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E5%BF%83%E7%90%86%E5%AD%A6%E8%AF%BB%E5%90%8E%E5%B0%8F%E7%BB%93/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">程序开发心理学读后小结</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-28T00:00:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>之前我从来不知道程序开发还有心理学这回事，后来从摆摆书架上换到了这本书，每天花半小时在地铁上把书看完了，这本40年前写的书对于今天的程序开发依然非常适用，神作啊神作，个人认为其实际指导作用更甚于人月神话。</p>
+
+<p> </p>
+
+<ol>
+  <li>阅读程序，理解程序的局限性。做为一名程序员我们经常会被离奇古怪的bug搞的焦头烂额，然后大骂写这个程序的人及其傻逼，当然也不排除有些时候发现代码注释里的署名竟然是自己。然而除去一些愚蠢的错误外，还有很大一部分bug是因为我们的各种综合因素导致现在的代码就是这样的。所以我们要面对的事实就是 只有在你实际动手编程或阅读后才能搞清楚代码为神马是这样的。</li>
+</ol>
+<ul>
+<li>程序员的问题</li>
+</ul>
+<p>由于对于计算机程序语言掌握程度不同，程序员可能产生很多冗余的代码(例如不知道有些现成的函数可以调用，有些很好用的语法可以减少代码，而写这个程序的人并不知道有这种写法)。</p>
+<ul>
+<li>历史遗留问题</li>
+</ul>
+<p>很多代码的存在是有他的历史原因的，比如当时提出的特定的需求，当时软件版本的原因。我们就曾经碰到过一个问题，因为把mysql的一个表存储引擎改成innodb后很多php页面报错，后来发现是因为很多插入语句用了这样的语法 “INSERT DELAYED INTO”， 而 insert delayed into 只有myisam引擎支持。 写这个程序的人并没有错，原来的表是myisam的，这样写反而可以提高数据库效率，可以说在没改表引擎之前这段代码是很正确的。</p>
+
+<p>小结：程序被编写成什么样子取决于众多的因素，然而因为习惯于从外部去考察，而不是阅读程序本身，我们总是无法认识到这些因素的多样性。一旦我们真的阅读了程序，就会发现无论是否必要，其中这些代码之所以如此编写都是有他的各种原因的。所以作者认为程序开发是一项社会行为，因该关注以人为主体的这些活动。</p>
+
+<p>反省： 我们是否有常常阅读代码的习惯，我们上一次阅读别人或是自己以前写过的代码是什么时候了，为什么不现在尝试一下，看看会发现写什么。</p>
+
+<p> </p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-28T00:00:00+08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2012</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/" title="Previous Post: 根据IP获得城市名称 Ruby 版">&laquo; 根据IP获得城市名称 Ruby 版</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/" title="Next Post: 关于Jquery offset().top 在IE和Firefox下行为不一致的问题">关于Jquery offset().top 在IE和Firefox下行为不一致的问题 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/07/26/probability-chapter1/">probability chapter1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/15/reading-rails-1/">Rails 源码学习 1 (Rails 的初始化过程) </a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/26/git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">git 常用命令</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/04/26/git-practice/">git 团队开发实践</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/08/metaprogramming/">metaprogramming learning</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/02/28/%E7%A8%8B%E5%BA%8F%E5%BC%80%E5%8F%91%E5%BF%83%E7%90%86%E5%AD%A6%E8%AF%BB%E5%90%8E%E5%B0%8F%E7%BB%93/">程序开发心理学读后小结</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
