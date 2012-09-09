@@ -1,0 +1,669 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Rails 源码学习 2 (Rack and Webrick) - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="先来一个rack程序的简单例子 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+require &#39;rubygems&#39;
+require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.com/blog/2012/09/09/reading-rails-2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails 源码学习 2 (Rack and Webrick)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-09T21:33:00+08:00" pubdate data-updated="true">Sep 9<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3 id="rack">先来一个rack程序的简单例子</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rack&#39;</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">HelloWorld</span>
+</span><span class="line">  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class="line">    <span class="k">return</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{},</span> <span class="o">[</span><span class="s2">&quot;Hello world!&quot;</span><span class="o">]]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">WEBrick</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="no">HelloWorld</span><span class="o">.</span><span class="n">new</span><span class="p">,</span><span class="ss">:Port</span> <span class="o">=&gt;</span> <span class="mi">9000</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><code>HelloWorld</code> 方法里定义了一个call方法，call方法只有一个参数env, 方法会return一个数组，里面包含了http请求的response. 运行一下这个文件看看：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="err">$</span> <span class="n">ruby</span> <span class="n">myserver</span><span class="o">.</span><span class="n">rb</span>
+</span><span class="line"><span class="o">[</span><span class="mi">2012</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">24</span> <span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">28</span><span class="o">]</span> <span class="no">INFO</span>  <span class="no">WEBrick</span> <span class="mi">1</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">1</span>
+</span><span class="line"><span class="o">[</span><span class="mi">2012</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">24</span> <span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">28</span><span class="o">]</span> <span class="no">INFO</span>  <span class="n">ruby</span> <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span> <span class="p">(</span><span class="mi">2012</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span><span class="p">)</span> <span class="o">[</span><span class="n">x86_64</span><span class="o">-</span><span class="n">darwin11</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">0</span><span class="o">]</span>
+</span><span class="line"><span class="o">[</span><span class="mi">2012</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">24</span> <span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">:</span><span class="mi">28</span><span class="o">]</span> <span class="no">INFO</span>  <span class="no">WEBrick</span><span class="o">::</span><span class="no">HTTPServer</span><span class="c1">#start: pid=17920 port=9000</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>我们通过 WebBrick的run方法启动WebBrick Server, 并且传递了HelloWorld的实例， 现在端口在9000, 打开网页访问 <code>http://localhost:9000</code> 就会看到页面里显示的是 <code>Hello world!</code>.</p>
+
+<h3 id="rackup">rackup</h3>
+<p>rack 本身就提供了一个 rackup 工具， 我们可以用rackup工具启动一个文件，不过这个文件要是 .ru后缀结尾的，默认名称是config.ru, 这个文件是不是很眼熟, 其实在每个rails项目的根目录下都有这个文件。让我们来写一个config.ru文件</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">run</span> <span class="no">Proc</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span><span class="p">},</span> <span class="o">[</span><span class="s2">&quot;Hello Rack!&quot;</span><span class="o">]]</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>好了，在文件目录里运行一下</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="err">$</span> <span class="n">rackup</span> <span class="n">config</span><span class="o">.</span><span class="n">ru</span>
+</span><span class="line"><span class="o">[</span><span class="mi">2012</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">24</span> <span class="mi">14</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">34</span><span class="o">]</span> <span class="no">INFO</span>  <span class="no">WEBrick</span> <span class="mi">1</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">1</span>
+</span><span class="line"><span class="o">[</span><span class="mi">2012</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">24</span> <span class="mi">14</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">34</span><span class="o">]</span> <span class="no">INFO</span>  <span class="n">ruby</span> <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span> <span class="p">(</span><span class="mi">2012</span><span class="o">-</span><span class="mo">04</span><span class="o">-</span><span class="mi">20</span><span class="p">)</span> <span class="o">[</span><span class="n">x86_64</span><span class="o">-</span><span class="n">darwin11</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">0</span><span class="o">]</span>
+</span><span class="line"><span class="o">[</span><span class="mi">2012</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">24</span> <span class="mi">14</span><span class="p">:</span><span class="mi">56</span><span class="p">:</span><span class="mi">34</span><span class="o">]</span> <span class="no">INFO</span>  <span class="no">WEBrick</span><span class="o">::</span><span class="no">HTTPServer</span><span class="c1">#start: pid=18286 port=9292</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>这回是绑定在9292端口，rack的默认端口上。</p>
+
+<h3 id="middleware">middleware</h3>
+
+<p>rack 的middleware 提供对任何请求的filter功能，比如我们可以为每次请求记录log, 给每个html页面里加入一些信息，有了middleware接口，
+实现起来就非常方便了，而且我们可以堆叠所有的middleware,每一个middleware处理完后传给下一个，直到没有middleware了才会把结果输出出来,
+把上面的例子再改一改，为每次输出里面都增加一个字符串：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">class</span> <span class="nc">InsertName</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class="line">      <span class="vi">@app</span> <span class="o">=</span> <span class="n">app</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class="line">      <span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="vi">@app</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class="line">      <span class="o">[</span><span class="n">status</span><span class="p">,</span><span class="n">headers</span><span class="p">,</span> <span class="o">[</span><span class="n">response</span><span class="o">[</span><span class="mi">0</span><span class="o">]+</span> <span class="s1">&#39; jonny&#39;</span><span class="o">]]</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">use</span> <span class="no">InsertName</span>
+</span><span class="line">
+</span><span class="line"><span class="n">run</span> <span class="no">Proc</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span><span class="p">},</span> <span class="o">[</span><span class="s2">&quot;Hello Rack!&quot;</span><span class="o">]]</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>重新用rackup启动，访问 localhost:9292， 会看到结果是 <code>Hello Rack! jonny</code></p>
+
+<p>middleware的应用非常灵活强大，rails的很多功能都是基于rack middleware实现的，在rails项目下输入
+<code>rack middleware</code> 会列出项目用到的所有middleware, 下面是我的一个项目的middleware列表：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Static</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Lock</span>
+</span><span class="line"><span class="n">use</span> <span class="c1">#&lt;ActiveSupport::Cache::Strategy::LocalCache::Middleware:0x007facbb14adb0&gt;</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Runtime</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">MethodOverride</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">RequestId</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Rails</span><span class="o">::</span><span class="no">Rack</span><span class="o">::</span><span class="no">Logger</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">ShowExceptions</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">DebugExceptions</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">RemoteIp</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Reloader</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Callbacks</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">ConnectionAdapters</span><span class="o">::</span><span class="no">ConnectionManagement</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">QueryCache</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Cookies</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Session</span><span class="o">::</span><span class="no">CookieStore</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Flash</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">ParamsParser</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">Head</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ConditionalGet</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">ETag</span>
+</span><span class="line"><span class="n">use</span> <span class="no">ActionDispatch</span><span class="o">::</span><span class="no">BestStandardsSupport</span>
+</span><span class="line"><span class="n">use</span> <span class="no">Warden</span><span class="o">::</span><span class="no">Manager</span>
+</span><span class="line"><span class="n">use</span> <span class="no">OmniAuth</span><span class="o">::</span><span class="no">Strategies</span><span class="o">::</span><span class="no">Weibo</span>
+</span><span class="line"><span class="n">run</span> <span class="no">Opinion</span><span class="o">::</span><span class="no">Application</span><span class="o">.</span><span class="n">routes</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="rack-handler">rack handler</h3>
+
+<p>rack handler 是rack链接server的桥梁，rack 库自带了很多server端的handler, 我们用webrick的handler做示例，在第一个例子里我们就是用的handler启动的Webrick server：
+<code>Rack::Handler::WEBrick.run(HelloWorld.new,:Port =&gt; 9000)</code></p>
+
+<ul>
+  <li>rack/lib/rack/handler/webrick.rb</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">Rack</span>
+</span><span class="line">  <span class="k">module</span> <span class="nn">Handler</span>
+</span><span class="line">    <span class="k">class</span> <span class="nc">WEBrick</span> <span class="o">&lt;</span> <span class="o">::</span><span class="no">WEBrick</span><span class="o">::</span><span class="no">HTTPServlet</span><span class="o">::</span><span class="no">AbstractServlet</span>
+</span><span class="line">	  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
+</span><span class="line">        <span class="n">options</span><span class="o">[</span><span class="ss">:BindAddress</span><span class="o">]</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="ss">:Host</span><span class="p">)</span> <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span>
+</span><span class="line">        <span class="vi">@server</span> <span class="o">=</span> <span class="o">::</span><span class="no">WEBrick</span><span class="o">::</span><span class="no">HTTPServer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+</span><span class="line">        <span class="vi">@server</span><span class="o">.</span><span class="n">mount</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Handler</span><span class="o">::</span><span class="no">WEBrick</span><span class="p">,</span> <span class="n">app</span>
+</span><span class="line">        <span class="k">yield</span> <span class="vi">@server</span>  <span class="k">if</span> <span class="nb">block_given?</span>
+</span><span class="line">        <span class="vi">@server</span><span class="o">.</span><span class="n">start</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">	  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line">  	<span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>WEBrick类是继承于 <code>WEBrick::HTTPServlet::AbstractServlet</code> 这个类的，在 <code>self.run</code> 方法中首先是 new 了一个 WEBrick::HTTPServer，server的mount方法 加载了WEBrick handler类，接下来server处理完block里面的内容后进行启动，看来所有的操作都是 <code>WEBrick::HTTPServer</code> 类完成的，下面就到这个类的源码里看看。</p>
+
+<p>Webrick是ruby的标准函数库，不在gems目录里，我的机器上在 <code>.rvm/rubies/ruby-1.9.3-p194/lib/ruby/1.9.1/webrick</code> 目录下面：</p>
+
+<ul>
+  <li>webrick/httpserver.rb</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">class</span> <span class="nc">HTTPServer</span> <span class="o">&lt;</span> <span class="o">::</span><span class="no">WEBrick</span><span class="o">::</span><span class="no">GenericServer</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{},</span> <span class="n">default</span><span class="o">=</span><span class="no">Config</span><span class="o">::</span><span class="no">HTTP</span><span class="p">)</span>
+</span><span class="line">      <span class="k">super</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+</span><span class="line">      <span class="vi">@http_version</span> <span class="o">=</span> <span class="no">HTTPVersion</span><span class="o">::</span><span class="n">convert</span><span class="p">(</span><span class="vi">@config</span><span class="o">[</span><span class="ss">:HTTPVersion</span><span class="o">]</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">      <span class="vi">@mount_tab</span> <span class="o">=</span> <span class="no">MountTable</span><span class="o">.</span><span class="n">new</span>
+</span><span class="line">      <span class="k">if</span> <span class="vi">@config</span><span class="o">[</span><span class="ss">:DocumentRoot</span><span class="o">]</span>
+</span><span class="line">        <span class="n">mount</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="no">HTTPServlet</span><span class="o">::</span><span class="no">FileHandler</span><span class="p">,</span> <span class="vi">@config</span><span class="o">[</span><span class="ss">:DocumentRoot</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">              <span class="vi">@config</span><span class="o">[</span><span class="ss">:DocumentRootOptions</span><span class="o">]</span><span class="p">)</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">      <span class="k">unless</span> <span class="vi">@config</span><span class="o">[</span><span class="ss">:AccessLog</span><span class="o">]</span>
+</span><span class="line">        <span class="vi">@config</span><span class="o">[</span><span class="ss">:AccessLog</span><span class="o">]</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class="line">          <span class="o">[</span> <span class="vg">$stderr</span><span class="p">,</span> <span class="no">AccessLog</span><span class="o">::</span><span class="no">COMMON_LOG_FORMAT</span> <span class="o">]</span><span class="p">,</span>
+</span><span class="line">          <span class="o">[</span> <span class="vg">$stderr</span><span class="p">,</span> <span class="no">AccessLog</span><span class="o">::</span><span class="no">REFERER_LOG_FORMAT</span> <span class="o">]</span>
+</span><span class="line">        <span class="o">]</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">      <span class="vi">@virtual_hosts</span> <span class="o">=</span> <span class="nb">Array</span><span class="o">.</span><span class="n">new</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>父类GenericServer主要做了一些config初始化，端口绑定的工作，mount serverlet 到 相应的路径。</p>
+
+<p>然后看看 <code>start</code> 方法, httpserver里并没有start方法，而是调用了父类的start：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">      <span class="k">raise</span> <span class="no">ServerError</span><span class="p">,</span> <span class="s2">&quot;already started.&quot;</span> <span class="k">if</span> <span class="vi">@status</span> <span class="o">!=</span> <span class="ss">:Stop</span>
+</span><span class="line">      <span class="n">server_type</span> <span class="o">=</span> <span class="vi">@config</span><span class="o">[</span><span class="ss">:ServerType</span><span class="o">]</span> <span class="o">||</span> <span class="no">SimpleServer</span>
+</span><span class="line">
+</span><span class="line">      <span class="n">server_type</span><span class="o">.</span><span class="n">start</span><span class="p">{</span>
+</span><span class="line">        <span class="vi">@logger</span><span class="o">.</span><span class="n">info</span> <span class="p">\</span>
+</span><span class="line">          <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="s2">#start: pid=</span><span class="si">#{</span><span class="vg">$$</span><span class="si">}</span><span class="s2"> port=</span><span class="si">#{</span><span class="vi">@config</span><span class="o">[</span><span class="ss">:Port</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class="line">        <span class="n">call_callback</span><span class="p">(</span><span class="ss">:StartCallback</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">thgroup</span> <span class="o">=</span> <span class="no">ThreadGroup</span><span class="o">.</span><span class="n">new</span>
+</span><span class="line">        <span class="vi">@status</span> <span class="o">=</span> <span class="ss">:Running</span>
+</span><span class="line">        <span class="k">while</span> <span class="vi">@status</span> <span class="o">==</span> <span class="ss">:Running</span>
+</span><span class="line">          <span class="k">begin</span>
+</span><span class="line">            <span class="k">if</span> <span class="n">svrs</span> <span class="o">=</span> <span class="no">IO</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="vi">@listeners</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="mi">2</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line">              <span class="n">svrs</span><span class="o">[</span><span class="mi">0</span><span class="o">].</span><span class="n">each</span><span class="p">{</span><span class="o">|</span><span class="n">svr</span><span class="o">|</span>
+</span><span class="line">                <span class="vi">@tokens</span><span class="o">.</span><span class="n">pop</span>          <span class="c1"># blocks while no token is there.</span>
+</span><span class="line">                <span class="k">if</span> <span class="n">sock</span> <span class="o">=</span> <span class="n">accept_client</span><span class="p">(</span><span class="n">svr</span><span class="p">)</span>
+</span><span class="line">                  <span class="n">sock</span><span class="o">.</span><span class="n">do_not_reverse_lookup</span> <span class="o">=</span> <span class="n">config</span><span class="o">[</span><span class="ss">:DoNotReverseLookup</span><span class="o">]</span>
+</span><span class="line">                  <span class="n">th</span> <span class="o">=</span> <span class="n">start_thread</span><span class="p">(</span><span class="n">sock</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">                  <span class="n">th</span><span class="o">[</span><span class="ss">:WEBrickThread</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">                  <span class="n">thgroup</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">th</span><span class="p">)</span>
+</span><span class="line">                <span class="k">else</span>
+</span><span class="line">                  <span class="vi">@tokens</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+</span><span class="line">                <span class="k">end</span>
+</span><span class="line">              <span class="p">}</span>
+</span><span class="line">            <span class="k">end</span>
+</span><span class="line">          <span class="k">rescue</span> <span class="no">Errno</span><span class="o">::</span><span class="no">EBADF</span><span class="p">,</span> <span class="no">IOError</span> <span class="o">=&gt;</span> <span class="n">ex</span>
+</span><span class="line">            <span class="c1"># if the listening socket was closed in GenericServer#shutdown,</span>
+</span><span class="line">            <span class="c1"># IO::select raise it.</span>
+</span><span class="line">          <span class="k">rescue</span> <span class="no">Exception</span> <span class="o">=&gt;</span> <span class="n">ex</span>
+</span><span class="line">            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">ex</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">ex</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="se">\n\t</span><span class="si">#{</span><span class="n">ex</span><span class="o">.</span><span class="n">backtrace</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class="line">            <span class="vi">@logger</span><span class="o">.</span><span class="n">error</span> <span class="n">msg</span>
+</span><span class="line">          <span class="k">end</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="vi">@logger</span><span class="o">.</span><span class="n">info</span> <span class="s2">&quot;going to shutdown ...&quot;</span>
+</span><span class="line">        <span class="n">thgroup</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">each</span><span class="p">{</span><span class="o">|</span><span class="n">th</span><span class="o">|</span> <span class="n">th</span><span class="o">.</span><span class="n">join</span> <span class="k">if</span> <span class="n">th</span><span class="o">[</span><span class="ss">:WEBrickThread</span><span class="o">]</span> <span class="p">}</span>
+</span><span class="line">        <span class="n">call_callback</span><span class="p">(</span><span class="ss">:StopCallback</span><span class="p">)</span>
+</span><span class="line">        <span class="vi">@logger</span><span class="o">.</span><span class="n">info</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="si">}</span><span class="s2">#start done.&quot;</span>
+</span><span class="line">        <span class="vi">@status</span> <span class="o">=</span> <span class="ss">:Stop</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>start方法内通过@status 状态一直做循环监听，如果有请求就进入处理过程，在start_thread方法中调用httpserver 的 run方法, run方法种初始化了 <code>HTTPResponse</code> 和 <code>HTTPRequest</code> 最后传递给了service方法</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">service</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">unparsed_uri</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">request_method</span> <span class="o">==</span> <span class="s2">&quot;OPTIONS&quot;</span>
+</span><span class="line">      <span class="n">do_OPTIONS</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class="line">      <span class="k">raise</span> <span class="no">HTTPStatus</span><span class="o">::</span><span class="no">OK</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">    <span class="k">raise</span> <span class="no">HTTPStatus</span><span class="o">::</span><span class="no">NotFound</span><span class="p">,</span> <span class="s2">&quot;`</span><span class="si">#{</span><span class="n">req</span><span class="o">.</span><span class="n">unparsed_uri</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">servlet</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">script_name</span><span class="p">,</span> <span class="n">path_info</span> <span class="o">=</span> <span class="n">search_servlet</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+</span><span class="line">  <span class="k">raise</span> <span class="no">HTTPStatus</span><span class="o">::</span><span class="no">NotFound</span><span class="p">,</span> <span class="s2">&quot;`</span><span class="si">#{</span><span class="n">req</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39; not found.&quot;</span> <span class="k">unless</span> <span class="n">servlet</span>
+</span><span class="line">  <span class="n">req</span><span class="o">.</span><span class="n">script_name</span> <span class="o">=</span> <span class="n">script_name</span>
+</span><span class="line">  <span class="n">req</span><span class="o">.</span><span class="n">path_info</span> <span class="o">=</span> <span class="n">path_info</span>
+</span><span class="line">  <span class="n">si</span> <span class="o">=</span> <span class="n">servlet</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="o">*</span><span class="n">options</span><span class="p">)</span>
+</span><span class="line">  <span class="vi">@logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">format</span><span class="p">(</span><span class="s2">&quot;%s is invoked.&quot;</span><span class="p">,</span> <span class="n">si</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+</span><span class="line">  <span class="n">si</span><span class="o">.</span><span class="n">service</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>servlet 变量就是之前在webrick handler里mount的类名，在这里取回来后通过 <code>servlet.get_instance</code> 创建了 <code>Rack::Handler::WEBrick</code> 实例，
+最终实例调用自己的service方法，我们又回到了 webrick handler 里面：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">service</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</span><span class="line">  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line">  <span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="vi">@app</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class="line">  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在这里我们一开始传进去的app被调用到，并返回对应的内容，到此为止一个request通过rack 再到WebBrick的处理完成.</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-09T21:33:00+08:00" pubdate data-updated="true">Sep 9<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rails/'>rails</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/08/31/carrierwave-pass-params/" title="Previous Post: carrierwave uploader 中传递变量">&laquo; carrierwave uploader 中传递变量</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/09/09/reading-rails-2/">Rails 源码学习 2 (Rack and Webrick)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/31/carrierwave-pass-params/">carrierwave uploader 中传递变量</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/15/reading-rails-1/">Rails 源码学习 1 (Rails 的初始化过程) </a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
