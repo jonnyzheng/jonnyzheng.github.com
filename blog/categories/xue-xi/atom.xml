@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 学习 | Jonny Zheng]]></title>
-  <link href="http://jonnyzheng.github.com/blog/categories/学习/atom.xml" rel="self"/>
-  <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-09-09T22:47:26+08:00</updated>
-  <id>http://jonnyzheng.github.com/</id>
+  <link href="http://jonnyzheng.github.io/blog/categories/xue-xi/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.io/"/>
+  <updated>2013-05-11T17:16:46+08:00</updated>
+  <id>http://jonnyzheng.github.io/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
     <email><![CDATA[mars131@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Java泛型简明教程]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/"/>
     <updated>2012-03-28T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng</id>
+    <id>http://jonnyzheng.github.io/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng</id>
     <content type="html"><![CDATA[<p>转自<a href="http://www.aqee.net/java-generics-quick-tutorial/">外刊it评论</a></p>
 
 <p>泛型是Java SE 5.0中引入的一项特征，自从这项语言特征出现多年来，我相信，几乎所有的Java程序员不仅听说过，而且使用过它。关于Java泛型的教程，免费的，不免费的，有很多。我遇到的最好的教材有：</p>

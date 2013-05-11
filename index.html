@@ -9,19 +9,7 @@
   <meta name="author" content="Jonny">
 
   
-  <meta name="description" content="先来一个rack程序的简单例子 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-require &#39;rubygems&#39;
-require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &hellip;">
+  <meta name="description" content="在第一篇Rails 的初始化过程里讲到rails的启动命令是在 railties/lib/rails/commands/server.rb 里执行的，其实这里的server类是继承自Rack::Server的，从这里就可以看出rails是一个rack app，rack 连接了Rails应用和 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -30,7 +18,7 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://jonnyzheng.github.com/">
+  <link rel="canonical" href="http://jonnyzheng.github.io/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -98,7 +86,7 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input type="hidden" name="q" value="site:jonnyzheng.github.io" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -114,6 +102,706 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-29T13:05:00+08:00" pubdate data-updated="true">Apr 29<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在第一篇<a href="http://jonnyzheng.github.com/blog/2012/07/15/reading-rails-1/">Rails 的初始化过程</a>里讲到rails的启动命令是在 <code>railties/lib/rails/commands/server.rb</code> 里执行的，其实这里的server类是继承自<code>Rack::Server</code>的，从这里就可以看出rails是一个rack app，rack 连接了Rails应用和 WebServer, 现在让我们再深入进去看看rails的各个组件是如何被整合在一起的。</p>
+
+<p>在 Rails::Server类里一些方法被覆写，用于加载rails自己的config环境，middleware等：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># 覆盖了rack的middleware 方法，加载了3个middleware app</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">middleware</span>
+</span><span class="line">      <span class="n">middlewares</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class="line">      <span class="n">middlewares</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="no">Rails</span><span class="o">::</span><span class="no">Rack</span><span class="o">::</span><span class="no">LogTailer</span><span class="p">,</span> <span class="n">log_path</span><span class="o">]</span> <span class="k">unless</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
+</span><span class="line">      <span class="n">middlewares</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="no">Rails</span><span class="o">::</span><span class="no">Rack</span><span class="o">::</span><span class="no">Debugger</span><span class="o">]</span>  <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:debugger</span><span class="o">]</span>
+</span><span class="line">      <span class="n">middlewares</span> <span class="o">&lt;&lt;</span> <span class="o">[::</span><span class="no">Rack</span><span class="o">::</span><span class="no">ContentLength</span><span class="o">]</span>
+</span><span class="line">      <span class="no">Hash</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">middlewares</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="c1"># 默认端口改成3000，定义了rack的启动文件config.ru, 还有一些默认配置</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">default_options</span>
+</span><span class="line">      <span class="k">super</span><span class="o">.</span><span class="n">merge</span><span class="p">({</span>
+</span><span class="line">        <span class="ss">:Port</span>        <span class="o">=&gt;</span> <span class="mi">3000</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:environment</span> <span class="o">=&gt;</span> <span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;RAILS_ENV&#39;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;development&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">dup</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:daemonize</span>   <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:debugger</span>    <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:pid</span>         <span class="o">=&gt;</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;tmp/pids/server.pid&quot;</span><span class="p">),</span>
+</span><span class="line">        <span class="ss">:config</span>      <span class="o">=&gt;</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;config.ru&quot;</span><span class="p">)</span>
+</span><span class="line">      <span class="p">})</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="rails-configru">rails项目里的 config.ru</h2>
+<p>rack最后会执行config.ru,然后看看rails项目的根目录下config.ru里是如何写的</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#引用了config下面的 enviroment.rb </span>
+</span><span class="line"><span class="nb">require</span> <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../config/environment&#39;</span><span class="p">,</span>  <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># RailsStudy是我的rails的项目名称，这里的工作就是run 这个Application</span>
+</span><span class="line"><span class="n">run</span> <span class="no">RailsStudy</span><span class="o">::</span><span class="no">Application</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>我们的Rails代码就是在这一步开始被调用到的  </p>
+
+<p>下面来看看 <code>config/application.rb</code> 这个文件</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../boot&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">defined?</span><span class="p">(</span><span class="no">Bundler</span><span class="p">)</span>
+</span><span class="line">  <span class="c1"># If you precompile assets before deploying to production, use this line</span>
+</span><span class="line">  <span class="no">Bundler</span><span class="o">.</span><span class="n">require</span><span class="p">(</span><span class="o">*</span><span class="no">Rails</span><span class="o">.</span><span class="n">groups</span><span class="p">(</span><span class="ss">:assets</span> <span class="o">=&gt;</span> <span class="sx">%w(development test)</span><span class="p">))</span>
+</span><span class="line">  <span class="c1"># If you want your assets lazily compiled in production, use this line</span>
+</span><span class="line">  <span class="c1"># Bundler.require(:default, :assets, Rails.env)</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">module</span> <span class="nn">RailsStudy</span>
+</span><span class="line">  <span class="k">class</span> <span class="nc">Application</span> <span class="o">&lt;</span> <span class="no">Rails</span><span class="o">::</span><span class="no">Application</span>
+</span><span class="line">    <span class="c1"># Settings in config/environments/* take precedence over those specified here.</span>
+</span><span class="line">    <span class="c1"># Application configuration should go into files in config/initializers</span>
+</span><span class="line">    <span class="c1"># -- all .rb files in that directory are automatically loaded.</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Custom directories with classes and modules you want to be autoloadable.</span>
+</span><span class="line">    <span class="c1"># config.autoload_paths += %W(#{config.root}/extras)</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Only load the plugins named here, in the order given (default is alphabetical).</span>
+</span><span class="line">    <span class="c1"># :all can be used as a placeholder for all plugins not explicitly named.</span>
+</span><span class="line">    <span class="c1"># config.plugins = [ :exception_notification, :ssl_requirement, :all ]</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Activate observers that should always be running.</span>
+</span><span class="line">    <span class="c1"># config.active_record.observers = :cacher, :garbage_collector, :forum_observer</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.</span>
+</span><span class="line">    <span class="c1"># Run &quot;rake -D time&quot; for a list of tasks for finding time zone names. Default is UTC.</span>
+</span><span class="line">    <span class="c1"># config.time_zone = &#39;Central Time (US &amp; Canada)&#39;</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.</span>
+</span><span class="line">    <span class="c1"># config.i18n.load_path += Dir[Rails.root.join(&#39;my&#39;, &#39;locales&#39;, &#39;*.{rb,yml}&#39;).to_s]</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">i18n</span><span class="o">.</span><span class="n">default_locale</span> <span class="o">=</span> <span class="s2">&quot;zh-CN&quot;</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Configure the default encoding used in templates for Ruby 1.9.</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Configure sensitive parameters which will be filtered from the log file.</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">filter_parameters</span> <span class="o">+=</span> <span class="o">[</span><span class="ss">:password</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Enable escaping HTML in JSON.</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">active_support</span><span class="o">.</span><span class="n">escape_html_entities_in_json</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Use SQL instead of Active Record&#39;s schema dumper when creating the database.</span>
+</span><span class="line">    <span class="c1"># This is necessary if your schema can&#39;t be completely dumped by the schema dumper,</span>
+</span><span class="line">    <span class="c1"># like if you have constraints or database-specific column types</span>
+</span><span class="line">    <span class="c1"># config.active_record.schema_format = :sql</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Enforce whitelist mode for mass assignment.</span>
+</span><span class="line">    <span class="c1"># This will create an empty whitelist of attributes available for mass-assignment for all models</span>
+</span><span class="line">    <span class="c1"># in your app. As such, your models will need to explicitly whitelist or blacklist accessible</span>
+</span><span class="line">    <span class="c1"># parameters by using an attr_accessible or attr_protected declaration.</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">active_record</span><span class="o">.</span><span class="n">whitelist_attributes</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Enable the asset pipeline</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1"># Version of your assets, change this if you want to expire all your assets</span>
+</span><span class="line">    <span class="n">config</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>这是一个默认的application文件，基本没有修改里面的内容. 在rails项目里application文件的作用主要是做一些初始化的设置，比如时区，i18n等等。</p>
+
+<p><code>RailsStudy::Application</code> 类是继承自 <code>Rails::Application</code>,然后我们去看看这个文件在哪里</p>
+
+<h2 id="railtieslibrailsapplicationrb">railties/lib/rails/application.rb</h2>
+
+<p>application文件里做了详细的介绍 Application的功能：</p>
+
+<ul>
+  <li>
+    <p>Initialization:<br />
+ Rails::Application负责执行所有的railties,engines,plugin的 initializer, 并且也执行
+ bootstrap initializer 和 finishing initializer</p>
+  </li>
+  <li>
+    <p>Configureation:<br />
+负责设置App的config，其中包含了 Rails::Engine和Rails::Railtie的config</p>
+  </li>
+  <li>
+    <p>Routes:<br />
+负责管理routes,当文件改变的时候reload所有的routes</p>
+  </li>
+  <li>
+    <p>Middlewares:<br />
+ 负责构建middlewares的堆栈</p>
+  </li>
+  <li>
+    <p>Booting process:<br />
+负责按照启动顺序启动和执行程序，大致程序如下</p>
+    <ol>
+      <li>require “config/boot.rb” to setup load paths</li>
+      <li>require railties and engines</li>
+      <li>Define Rails.application as “class MyApp::Application &lt; Rails::Application”</li>
+      <li>Run config.before_configuration callbacks</li>
+      <li>Load config/environments/ENV.rb</li>
+      <li>Run config.before_initialize callbacks</li>
+      <li>Run Railtie#initializer defined by railties, engines and application.</li>
+      <li>One by one, each engine sets up its load paths, routes and runs its config/initializers/* files.</li>
+      <li>Custom Railtie#initializers added by railties, engines and applications are executed</li>
+      <li>Build the middleware stack and run to_prepare callbacks</li>
+      <li>Run config.before_eager_load and eager_load if cache classes is true</li>
+      <li>Run config.after_initialize callbacks</li>
+    </ol>
+  </li>
+</ul>
+
+<p>这里先介绍一下application的功能，到最后我们再去看代码，接下来先看看Railtie。  </p>
+
+<h2 id="railtieslibrailsrailtierb">railties/lib/rails/railtie.rb</h2>
+
+<p>Rails::Application &lt; Rails::Engine &lt; Rails::Railtie  </p>
+
+<p>Railties 是rails framework的核心，用来提供各种回调方法以及扩展，或者修改初始化的process. 实际上每个rails组件(ActionMailer,Action Controller)都是一个railtie, 每个组件都有自己的初始化代码，这样rails就不用去专门把初始化工作都自己来做，只要在正确的时候调用各组件的初始化代码就可以了。</p>
+
+<p>Railtie的代码其实很短，只有100多行，类中一开始就引用了下面几个模块：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">autoload</span> <span class="ss">:Configurable</span><span class="p">,</span>  <span class="s2">&quot;rails/railtie/configurable&quot;</span>
+</span><span class="line"><span class="nb">autoload</span> <span class="ss">:Configuration</span><span class="p">,</span> <span class="s2">&quot;rails/railtie/configuration&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="kp">include</span> <span class="no">Initializable</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="configurable--configuration">Configurable &amp; Configuration</h4>
+<p>rails/railtie/configurable 中的类方法moudule中定义了 instance方法，并且将 @instance的config 方法代理给了include自己的类，</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">Rails</span>
+</span><span class="line">  <span class="k">class</span> <span class="nc">Railtie</span>
+</span><span class="line">    <span class="k">module</span> <span class="nn">Configurable</span>
+</span><span class="line">      <span class="kp">extend</span> <span class="ss">ActiveSupport</span><span class="p">:</span><span class="ss">:Concern</span>
+</span><span class="line">
+</span><span class="line">      <span class="k">module</span> <span class="nn">ClassMethods</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">delegate</span> <span class="ss">:config</span><span class="p">,</span> <span class="ss">:to</span> <span class="o">=&gt;</span> <span class="ss">:instance</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">def</span> <span class="nf">inherited</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+</span><span class="line">          <span class="k">raise</span> <span class="s2">&quot;You cannot inherit from a </span><span class="si">#{</span><span class="nb">self</span><span class="o">.</span><span class="n">superclass</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> child&quot;</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">def</span> <span class="nf">instance</span>
+</span><span class="line">          <span class="vi">@instance</span> <span class="o">||=</span> <span class="kp">new</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这里的@instance有可能是Railtie，Engine,Application类的实例，他们都有自己的config方法实现,方法里基本上都是生成了自己的Configuration实现，这些Configuration类也是依次的继承关系:
+<code>Application::Configuration &lt; Engine::Configuration &lt; Railtie::Configuration</code></p>
+
+<h4 id="initializable">Initializable</h4>
+
+<p>railties/lib/rails/rails/initializable.rb 中定义了Module Rails::Initializable, 所有include了该Module的类都拥有了 <code>initializer</code>,<code>initializers</code>,<code>initializers_chain</code> 等类方法，<code>initializer</code> 方法帮助类可以定义一个或多个自己的 initializer, 并且通过<code>initializers</code>,<code>initializers_chain</code>来获取他们。</p>
+
+<p>比如用来加载i18n的本地化文件路径:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">initializer</span> <span class="ss">:add_locales</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">i18n</span><span class="o">.</span><span class="n">railties_load_path</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">paths</span><span class="o">[</span><span class="s2">&quot;config/locales&quot;</span><span class="o">].</span><span class="n">existent</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">initializer</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">opts</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">blk</span><span class="p">)</span>
+</span><span class="line">        <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;A block must be passed when defining an initializer&quot;</span> <span class="k">unless</span> <span class="n">blk</span>
+</span><span class="line">        <span class="n">opts</span><span class="o">[</span><span class="ss">:after</span><span class="o">]</span> <span class="o">||=</span> <span class="n">initializers</span><span class="o">.</span><span class="n">last</span><span class="o">.</span><span class="n">name</span> <span class="k">unless</span> <span class="n">initializers</span><span class="o">.</span><span class="n">empty?</span> <span class="o">||</span> <span class="n">initializers</span><span class="o">.</span><span class="n">find</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">opts</span><span class="o">[</span><span class="ss">:before</span><span class="o">]</span> <span class="p">}</span>
+</span><span class="line">        <span class="n">initializers</span> <span class="o">&lt;&lt;</span> <span class="no">Initializer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">opts</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">blk</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>在方法中会生成一个<code>Initializer</code>的实例，然后加入到<code>@initializers</code>变量中，最后会在Application类中的initialize!方法中会被执行。</p>
+
+<h2 id="railtieslibrailsenginerb">railties/lib/rails/engine.rb</h2>
+
+<p>Rails::Engine用来生成一个简单的Rails应用的子集，打包成通用的程序供不同的Rails项目使用。
+从Rails 3.0开始Rails应用就是一个Engine, 实际上Application类是继承自Engine类的。</p>
+
+<p>我们写的Gem包也可以是一个Engine应用，里面可以包含自己的controller,model,view文件，文件结构也可以和rails的文件结构一样，这样的构架很方便做一些通用的功能包，为减少重复代码提供了极大的方便。Engine本身还是有很多内容可以说的，关于如何应用他可以看看这个教程：<a href="http://guides.rubyonrails.org/engines.html">Getting Started with Engines</a>。</p>
+
+<p>再回过头来看代码，首先 Engine类是继承于 Railtie 的，也就是拥有了Railtie类的基本功能，但同时Engine类也扩展了自己的configuration类，这里主要为一个Engine定义了他的文件结构：</p>
+
+<p>railties/lib/rails/engine/configuration.rb</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">  <span class="k">def</span> <span class="nf">paths</span>
+</span><span class="line">    <span class="vi">@paths</span> <span class="o">||=</span> <span class="k">begin</span>
+</span><span class="line">      <span class="n">paths</span> <span class="o">=</span> <span class="ss">Rails</span><span class="p">:</span><span class="ss">:Paths</span><span class="o">::</span><span class="no">Root</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="vi">@root</span><span class="p">)</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app&quot;</span><span class="p">,</span>                 <span class="ss">:eager_load</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;*&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app/assets&quot;</span><span class="p">,</span>          <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;*&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app/controllers&quot;</span><span class="p">,</span>     <span class="ss">:eager_load</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app/helpers&quot;</span><span class="p">,</span>         <span class="ss">:eager_load</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app/models&quot;</span><span class="p">,</span>          <span class="ss">:eager_load</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app/mailers&quot;</span><span class="p">,</span>         <span class="ss">:eager_load</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;app/views&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;lib&quot;</span><span class="p">,</span>                 <span class="ss">:load_path</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;lib/assets&quot;</span><span class="p">,</span>          <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;*&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;lib/tasks&quot;</span><span class="p">,</span>           <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;**/*.rake&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config/environments&quot;</span><span class="p">,</span> <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">.rb&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config/initializers&quot;</span><span class="p">,</span> <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;**/*.rb&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config/locales&quot;</span><span class="p">,</span>      <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;*.{rb,yml}&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config/routes&quot;</span><span class="p">,</span>       <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">&quot;config/routes.rb&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;db&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;db/migrate&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;db/seeds&quot;</span><span class="p">,</span>            <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">&quot;db/seeds.rb&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;vendor&quot;</span><span class="p">,</span>              <span class="ss">:load_path</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;vendor/assets&quot;</span><span class="p">,</span>       <span class="ss">:glob</span> <span class="o">=&gt;</span> <span class="s2">&quot;*&quot;</span>
+</span><span class="line">      <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;vendor/plugins&quot;</span>
+</span><span class="line">      <span class="n">paths</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>railties/lib/rails/engine/railties.rb</p>
+
+<p>Engine的Railties类是用来获取相关的railties，如self.railies方法可以获得当前环境下所有
+继承了<code>::Rails::Railtie</code> 的类的实例, self.engines则可以得到所有继承<code>::Rails::Engine</code>
+的实例。</p>
+
+<p>回到engine.rb, 这里定义了很多initializer,大部分的initializer是用来查看并加载所需要的文件用的。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">set_autoload_paths</span> <span class="c1">#设置需要自动load的文件路径</span>
+</span><span class="line"><span class="n">add_routing_paths</span> <span class="c1">#如果routes文件存在则load相关文件</span>
+</span><span class="line"><span class="n">add_locales</span>  <span class="c1">#如果本地化文件存在则load相关文件</span>
+</span><span class="line"><span class="n">load_config_initializers</span> <span class="c1">#如果有initializer文件存在则load相关文件</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="railtieslibrailsapplicationrb-1">railties/lib/rails/application.rb</h2>
+
+<p>了解完Engine后再来看看Application的代码, 首先是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">class</span> <span class="nc">Application</span> <span class="o">&lt;</span> <span class="no">Engine</span>
+</span><span class="line">    <span class="nb">autoload</span> <span class="ss">:Bootstrap</span><span class="p">,</span>      <span class="s1">&#39;rails/application/bootstrap&#39;</span>
+</span><span class="line">    <span class="nb">autoload</span> <span class="ss">:Configuration</span><span class="p">,</span>  <span class="s1">&#39;rails/application/configuration&#39;</span>
+</span><span class="line">    <span class="nb">autoload</span> <span class="ss">:Finisher</span><span class="p">,</span>       <span class="s1">&#39;rails/application/finisher&#39;</span>
+</span><span class="line">    <span class="nb">autoload</span> <span class="ss">:Railties</span><span class="p">,</span>       <span class="s1">&#39;rails/application/railties&#39;</span>
+</span><span class="line">    <span class="nb">autoload</span> <span class="ss">:RoutesReloader</span><span class="p">,</span> <span class="s1">&#39;rails/application/routes_reloader&#39;</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">	<span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>rails/application/bootstrap 定义启动是最开始需要加载的initializers,比如加载Logger,加载ActiveSupport的所有功能。</p>
+
+<p>rails/application/configuration 是继承于 ::Rails::Engine::Configuration，这里他提供了一个Rails Application所需要的更多config options:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">Rails</span>
+</span><span class="line">  <span class="k">class</span> <span class="nc">Application</span>
+</span><span class="line">    <span class="k">class</span> <span class="nc">Configuration</span> <span class="o">&lt;</span> <span class="o">::</span><span class="ss">Rails</span><span class="p">:</span><span class="ss">:Engine</span><span class="o">::</span><span class="no">Configuration</span>
+</span><span class="line">      <span class="kp">attr_accessor</span> <span class="ss">:allow_concurrency</span><span class="p">,</span> <span class="ss">:asset_host</span><span class="p">,</span> <span class="ss">:asset_path</span><span class="p">,</span> <span class="ss">:assets</span><span class="p">,</span>
+</span><span class="line">                    <span class="ss">:cache_classes</span><span class="p">,</span> <span class="ss">:cache_store</span><span class="p">,</span> <span class="ss">:consider_all_requests_local</span><span class="p">,</span>
+</span><span class="line">                    <span class="ss">:dependency_loading</span><span class="p">,</span> <span class="ss">:exceptions_app</span><span class="p">,</span> <span class="ss">:file_watcher</span><span class="p">,</span> <span class="ss">:filter_parameters</span><span class="p">,</span>
+</span><span class="line">                    <span class="ss">:force_ssl</span><span class="p">,</span> <span class="ss">:helpers_paths</span><span class="p">,</span> <span class="ss">:logger</span><span class="p">,</span> <span class="ss">:log_tags</span><span class="p">,</span> <span class="ss">:preload_frameworks</span><span class="p">,</span>
+</span><span class="line">                    <span class="ss">:railties_order</span><span class="p">,</span> <span class="ss">:relative_url_root</span><span class="p">,</span> <span class="ss">:reload_plugins</span><span class="p">,</span> <span class="ss">:secret_token</span><span class="p">,</span>
+</span><span class="line">                    <span class="ss">:serve_static_assets</span><span class="p">,</span> <span class="ss">:ssl_options</span><span class="p">,</span> <span class="ss">:static_cache_control</span><span class="p">,</span> <span class="ss">:session_options</span><span class="p">,</span>
+</span><span class="line">                    <span class="ss">:time_zone</span><span class="p">,</span> <span class="ss">:reload_classes_only_on_change</span><span class="p">,</span> <span class="ss">:whiny_nils</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">   <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>更多的paths:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="k">def</span> <span class="nf">paths</span>
+</span><span class="line">        <span class="vi">@paths</span> <span class="o">||=</span> <span class="k">begin</span>
+</span><span class="line">          <span class="n">paths</span> <span class="o">=</span> <span class="k">super</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config/database&quot;</span><span class="p">,</span>    <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">&quot;config/database.yml&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;config/environment&quot;</span><span class="p">,</span> <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">&quot;config/environment.rb&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;lib/templates&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>                <span class="ss">:with</span> <span class="o">=&gt;</span> <span class="s2">&quot;log/</span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">.log&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;public&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;public/javascripts&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;public/stylesheets&quot;</span>
+</span><span class="line">          <span class="n">paths</span><span class="o">.</span><span class="n">add</span> <span class="s2">&quot;tmp&quot;</span>
+</span><span class="line">          <span class="n">paths</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">      <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>rails/application/finisher.rb 用来定义在启动完成前需要加载的initializers
+rails/application/railties.rb 用来获得所有的railties，包括engines,plugins,railties。
+rails/application/routes_reloader.rb 用来提供检测文件改动和reload routes的功能。</p>
+
+<p>initialize!方法在每个Rails项目的config/enviroment.rb中被调用到，这时会真正的执行所有定义好
+的initializers</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">initialize!</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="ss">:default</span><span class="p">)</span> <span class="c1">#:nodoc:</span>
+</span><span class="line">    <span class="k">raise</span> <span class="s2">&quot;Application has been already initialized.&quot;</span> <span class="k">if</span> <span class="vi">@initialized</span>
+</span><span class="line">    <span class="n">run_initializers</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="nb">self</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@initialized</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">    <span class="nb">self</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>每一个initializer最后在 Rails::Initializable::Initializer类的run方法中被执行到：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@context</span><span class="o">.</span><span class="n">instance_exec</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>default_middleware_stack方法为rails程序加载默认的middleware, 该方法在Engine类的<code>app</code>方法中被调用到。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">def</span> <span class="nf">default_middleware_stack</span>
+</span><span class="line">      <span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:MiddlewareStack</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">middleware</span><span class="o">|</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">rack_cache</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">action_controller</span><span class="o">.</span><span class="n">perform_caching</span> <span class="o">&amp;&amp;</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">rack_cache</span>
+</span><span class="line">          <span class="nb">require</span> <span class="s2">&quot;action_dispatch/http/rack_cache&quot;</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:Cache</span><span class="p">,</span> <span class="n">rack_cache</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">force_ssl</span>
+</span><span class="line">          <span class="nb">require</span> <span class="s2">&quot;rack/ssl&quot;</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:SSL</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">ssl_options</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">serve_static_assets</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:Static</span><span class="p">,</span> <span class="n">paths</span><span class="o">[</span><span class="s2">&quot;public&quot;</span><span class="o">].</span><span class="n">first</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">static_cache_control</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:Lock</span> <span class="k">unless</span> <span class="n">config</span><span class="o">.</span><span class="n">allow_concurrency</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:Runtime</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:MethodOverride</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:RequestId</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rails</span><span class="p">:</span><span class="ss">:Rack</span><span class="o">::</span><span class="no">Logger</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">log_tags</span> <span class="c1"># must come after Rack::MethodOverride to properly log overridden methods</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:ShowExceptions</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">exceptions_app</span> <span class="o">||</span> <span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:PublicExceptions</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">public_path</span><span class="p">)</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:DebugExceptions</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:RemoteIp</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">ip_spoofing_check</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">trusted_proxies</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">x_sendfile_header</span><span class="o">.</span><span class="n">present?</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:Sendfile</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">x_sendfile_header</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">unless</span> <span class="n">config</span><span class="o">.</span><span class="n">cache_classes</span>
+</span><span class="line">          <span class="n">app</span> <span class="o">=</span> <span class="nb">self</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:Reloader</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="n">app</span><span class="o">.</span><span class="n">reload_dependencies?</span> <span class="p">}</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:Callbacks</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:Cookies</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">session_store</span>
+</span><span class="line">          <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">force_ssl</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">config</span><span class="o">.</span><span class="n">session_options</span><span class="o">.</span><span class="n">key?</span><span class="p">(</span><span class="ss">:secure</span><span class="p">)</span>
+</span><span class="line">            <span class="n">config</span><span class="o">.</span><span class="n">session_options</span><span class="o">[</span><span class="ss">:secure</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">          <span class="k">end</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="n">config</span><span class="o">.</span><span class="n">session_store</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">session_options</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:Flash</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:ParamsParser</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:Head</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:ConditionalGet</span>
+</span><span class="line">        <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:ETag</span><span class="p">,</span> <span class="s2">&quot;no-cache&quot;</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">best_standards_support</span>
+</span><span class="line">          <span class="n">middleware</span><span class="o">.</span><span class="n">use</span> <span class="o">::</span><span class="ss">ActionDispatch</span><span class="p">:</span><span class="ss">:BestStandardsSupport</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">action_dispatch</span><span class="o">.</span><span class="n">best_standards_support</span>
+</span><span class="line">        <span class="k">end</span>
+</span><span class="line">      <span class="k">end</span>
+</span><span class="line">    <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>嗯，基本上就是这回所有的内容了，总结一下： Railtie为所有rails组件提供了和Rails整合的接口，使他们可以定义自己的初始化内容，可以有自己的配置。 Engine继承于Railtie, 提供了一个功能最小化的Rails文档结构，Application继承于Engine, 在Engine的基础上定义了一个完整Rails所需要的Initializers和middleware,同时在启动时负责加载Rails程序中其他组件的所有Initializers。</p>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1709,58 +2397,6 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">Linode 和 Amazon EC2 国内访问速度的比较</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-10T00:00:00+08:00" pubdate data-updated="true">Sep 10<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>这两天在看云主机和vps，比较了一下目前的网速:</p>
-
-<p> </p>
-
-<p>AWS 新加坡机房 300ms左右</p>
-
-<p>AWS 日本机房 120ms左右</p>
-
-<p>linode 美国机房 200-300ms左右，不稳定，晚上会慢一点，估计是美国白天的关系。</p>
-
-<p>linode 日本机房 70ms左右，前两天刚从美国迁移过来，速度很不错。</p>
-
-<p>公司香港机房  50 ms 仅做参考</p>
-
-<p>盛大云 (云中书城)  10- 20ms   云中书城是他唯一给出的案例，没法测试别的是否也这么快。</p>
-
-<p>刚申请成功盛大云， ping 新浪的结果是135 ms左右, 而且访问国外速度比较慢，linux下包有时只有8k, 继续试用中。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1774,6 +2410,10 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/09/09/reading-rails-2/">Rails 源码学习 2 (Rack and Webrick)</a>
@@ -1811,15 +2451,8 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
         <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
-      </li>
-    
   </ul>
 </section>
-
-
-
 
 
 
@@ -1829,12 +2462,25 @@ require &#39;rack&#39; class HelloWorld def call(env) return [200, {}, [&quot; &
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Jonny -
+  Copyright &copy; 2013 - Jonny -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'jonnyzhengblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

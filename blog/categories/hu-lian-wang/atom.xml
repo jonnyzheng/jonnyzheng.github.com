@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 互联网 | Jonny Zheng]]></title>
-  <link href="http://jonnyzheng.github.com/blog/categories/互联网/atom.xml" rel="self"/>
-  <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-09-09T22:47:26+08:00</updated>
-  <id>http://jonnyzheng.github.com/</id>
+  <link href="http://jonnyzheng.github.io/blog/categories/hu-lian-wang/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.io/"/>
+  <updated>2013-05-11T17:16:46+08:00</updated>
+  <id>http://jonnyzheng.github.io/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
     <email><![CDATA[mars131@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[37signals倡导及实践的8个理念]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/"/>
     <updated>2012-03-20T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian</id>
+    <id>http://jonnyzheng.github.io/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian</id>
     <content type="html"><![CDATA[<p>转贴：以此为标准铭记于心</p>
 
 <p>在软件设计界，37signals是非常受欢迎的一个小团队，对于Geek更是如此。不仅因为其自身产品的简洁、精益，更在于其对自身理念的实践。同时他们出版的书籍深受欢迎，特别是《Getting Real》及《Rework》。下面让我们看看他们所倡导的8个理念，对于产品设计、企业管理甚至个人素养都具有一定参考价值。
@@ -45,9 +45,9 @@
   
   <entry>
     <title type="html"><![CDATA[linode 和 Amazon EC2 国内访问速度的比较]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/"/>
+    <link href="http://jonnyzheng.github.io/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/"/>
     <updated>2011-09-10T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao</id>
+    <id>http://jonnyzheng.github.io/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao</id>
     <content type="html"><![CDATA[<p>这两天在看云主机和vps，比较了一下目前的网速:</p>
 
 <p> </p>
@@ -70,9 +70,9 @@
   
   <entry>
     <title type="html"><![CDATA[长期招募创业伙伴 上海地区]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/"/>
+    <link href="http://jonnyzheng.github.io/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu/"/>
     <updated>2011-09-10T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu</id>
+    <id>http://jonnyzheng.github.io/blog/2011/09/10/chang-qi-zhao-mu-chuang-ye-huo-ban---shang-hai-di-qu</id>
     <content type="html"><![CDATA[<p>本人正在进行一个创业计划，如果你是：交互及设计师，前端攻城师，Rails 攻城师 ,最好上海地区，如果能力很强可以外地， 而且希望趁年轻一起做一些疯狂的事情，可以联系我:mars131[at]gmail.com  。</p>
 
 <p>前期以业余时间为主，没有报酬，如果能融资到钱或者项目上线有收入了可以全职，待遇肯定比平均标准高，而且创业伙伴有股份。</p>

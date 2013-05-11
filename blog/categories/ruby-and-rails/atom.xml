@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Ruby &amp; Rails | Jonny Zheng]]></title>
-  <link href="http://jonnyzheng.github.com/blog/categories/ruby-amp-rails/atom.xml" rel="self"/>
-  <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-09-09T22:47:26+08:00</updated>
-  <id>http://jonnyzheng.github.com/</id>
+  <link href="http://jonnyzheng.github.io/blog/categories/ruby-and-rails/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.io/"/>
+  <updated>2013-05-11T17:16:46+08:00</updated>
+  <id>http://jonnyzheng.github.io/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
     <email><![CDATA[mars131@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[根据IP获得城市名称 Ruby 版]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/"/>
     <updated>2012-01-06T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban</id>
+    <id>http://jonnyzheng.github.io/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban</id>
     <content type="html"><![CDATA[<p>很多本地化生活网站的一个基本功能就是根据用户的IP地址判断所在的城市，基本的逻辑就是有一个ip库，根据ip库里的记录找到用户ip地址所在的范围。</p>
 
 <p>IP库没有太多选择，我在网上找到的一个<a href="http://www.maxmind.com/app/ip-location">http://www.maxmind.com/app/ip-location</a>， 这个网站本身提供收费的IP库和免费的IP库，收费的库在准确率上要稍微高一些，拿城市的库做一个例子，左边是免费版，右边是收费版：</p>
@@ -105,9 +105,9 @@
   
   <entry>
     <title type="html"><![CDATA[Paperclip在development 模式下打印不出convert 命令]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/"/>
+    <link href="http://jonnyzheng.github.io/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling/"/>
     <updated>2011-09-02T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling</id>
+    <id>http://jonnyzheng.github.io/blog/2011/09/02/paperclip-zai-development--mo-shi-xia-da-yin-bu-chu-convert--ming-ling</id>
     <content type="html"><![CDATA[<p>今天升级了一下bundle，结果在调试时发现原先可以打印paperclip执行的imagemagick命令，现在却不可以了，网上看了一下，原因是paperclip 调用了 Cocaine插件， 而之前执行命令的log代码已经删掉了，全靠Cocaine输出。</p>
 
 <p>简单的改法:</p>

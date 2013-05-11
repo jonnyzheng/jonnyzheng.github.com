@@ -9,7 +9,7 @@
   <meta name="author" content="Jonny">
 
   
-  <meta name="description" content="本人正在进行一个创业计划，如果你是：交互及设计师，前端攻城师，Rails 攻城师 ,最好上海地区，如果能力很强可以外地， 而且希望趁年轻一起做一些疯狂的事情，可以联系我:mars131[at]gmail.com  。 前期以业余时间为主，没有报酬，如果能融资到钱或者项目上线有收入了可以全职， &hellip;">
+  <meta name="description" content="这两天在看云主机和vps，比较了一下目前的网速:   AWS 新加坡机房 300ms左右 AWS 日本机房 120ms左右 linode 美国机房 200-300ms左右，不稳定，晚上会慢一点，估计是美国白天的关系。 linode 日本机房 70ms左右，前两天刚从美国迁移过来，速度很不错。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://jonnyzheng.github.com/blog/page/2/">
+  <link rel="canonical" href="http://jonnyzheng.github.io/blog/page/2/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -86,7 +86,7 @@
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input type="hidden" name="q" value="site:jonnyzheng.github.io" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -102,6 +102,58 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">Linode 和 Amazon EC2 国内访问速度的比较</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-10T00:00:00+08:00" pubdate data-updated="true">Sep 10<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>这两天在看云主机和vps，比较了一下目前的网速:</p>
+
+<p> </p>
+
+<p>AWS 新加坡机房 300ms左右</p>
+
+<p>AWS 日本机房 120ms左右</p>
+
+<p>linode 美国机房 200-300ms左右，不稳定，晚上会慢一点，估计是美国白天的关系。</p>
+
+<p>linode 日本机房 70ms左右，前两天刚从美国迁移过来，速度很不错。</p>
+
+<p>公司香港机房  50 ms 仅做参考</p>
+
+<p>盛大云 (云中书城)  10- 20ms   云中书城是他唯一给出的案例，没法测试别的是否也这么快。</p>
+
+<p>刚申请成功盛大云， ping 新浪的结果是135 ms左右, 而且访问国外速度比较慢，linux下包有时只有8k, 继续试用中。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -475,8 +527,7 @@ RSAAuthentication yes
 
 <p>于是做了个测试，user 表录入 100万的数据，同时建立 user_category 表，每个user有 3 个分类，那么category表里有300万条记录。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>[]</span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -484,15 +535,14 @@ RSAAuthentication yes
 <span class="line-number">6</span>
 <span class="line-number">7</span>
 <span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">user_category</span><span class="o">`</span> <span class="p">(</span>
-</span><span class="line"> <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
-</span><span class="line"> <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
-</span><span class="line"> <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
-</span><span class="line"> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
-</span><span class="line"> <span class="k">KEY</span> <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">category_id</span><span class="o">`</span><span class="p">),</span>
-</span><span class="line"> <span class="k">KEY</span> <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">tax_id</span><span class="o">`</span><span class="p">)</span>
-</span><span class="line"><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="n">AUTO_INCREMENT</span><span class="o">=</span><span class="mi">1</span> <span class="k">DEFAULT</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+</pre></td><td class="code"><pre><code class=""><span class="line">CREATE TABLE `user_category` (
+</span><span class="line"> `id` int(11) NOT NULL AUTO_INCREMENT,
+</span><span class="line"> `user_id` int(11) DEFAULT NULL,
+</span><span class="line"> `category_id` int(11) DEFAULT NULL,
+</span><span class="line"> PRIMARY KEY (`id`),
+</span><span class="line"> KEY `category_id` (`category_id`),
+</span><span class="line"> KEY `user_id` (`tax_id`)
+</span><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>现在比较一下在百万级的数据量上使用 join 链接外键查询和find_in_set查询的性能</p>
 
@@ -533,6 +583,10 @@ RSAAuthentication yes
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/09/09/reading-rails-2/">Rails 源码学习 2 (Rack and Webrick)</a>
       </li>
     
@@ -568,15 +622,8 @@ RSAAuthentication yes
         <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
-      </li>
-    
   </ul>
 </section>
-
-
-
 
 
 
@@ -586,12 +633,25 @@ RSAAuthentication yes
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Jonny -
+  Copyright &copy; 2013 - Jonny -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'jonnyzhengblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: rails | Jonny Zheng]]></title>
-  <link href="http://jonnyzheng.github.com/blog/categories/rails/atom.xml" rel="self"/>
-  <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-09-09T22:47:26+08:00</updated>
-  <id>http://jonnyzheng.github.com/</id>
+  <link href="http://jonnyzheng.github.io/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.io/"/>
+  <updated>2013-05-11T17:16:46+08:00</updated>
+  <id>http://jonnyzheng.github.io/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
     <email><![CDATA[mars131@gmail.com]]></email>
@@ -14,10 +14,434 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Rails 源码学习3 (Application,Engine,Railtie)]]></title>
+    <link href="http://jonnyzheng.github.io/blog/2013/04/29/reading-rails-3/"/>
+    <updated>2013-04-29T13:05:00+08:00</updated>
+    <id>http://jonnyzheng.github.io/blog/2013/04/29/reading-rails-3</id>
+    <content type="html"><![CDATA[<p>在第一篇<a href="http://jonnyzheng.github.com/blog/2012/07/15/reading-rails-1/">Rails 的初始化过程</a>里讲到rails的启动命令是在 <code>railties/lib/rails/commands/server.rb</code> 里执行的，其实这里的server类是继承自<code>Rack::Server</code>的，从这里就可以看出rails是一个rack app，rack 连接了Rails应用和 WebServer, 现在让我们再深入进去看看rails的各个组件是如何被整合在一起的。</p>
+
+<p>在 Rails::Server类里一些方法被覆写，用于加载rails自己的config环境，middleware等：</p>
+
+<p>```ruby
+# 覆盖了rack的middleware 方法，加载了3个middleware app
+def middleware
+      middlewares = []
+      middlewares « [Rails::Rack::LogTailer, log_path] unless options[:daemonize]
+      middlewares « [Rails::Rack::Debugger]  if options[:debugger]
+      middlewares « [::Rack::ContentLength]
+      Hash.new(middlewares)
+end</p>
+
+<h1 id="rackconfigru-">默认端口改成3000，定义了rack的启动文件config.ru, 还有一些默认配置</h1>
+<p>def default_options
+      super.merge({
+        :Port        =&gt; 3000,
+        :environment =&gt; (ENV[‘RAILS_ENV’] || “development”).dup,
+        :daemonize   =&gt; false,
+        :debugger    =&gt; false,
+        :pid         =&gt; File.expand_path(“tmp/pids/server.pid”),
+        :config      =&gt; File.expand_path(“config.ru”)
+      })
+end
+```</p>
+
+<h2 id="rails-configru">rails项目里的 config.ru</h2>
+<p>rack最后会执行config.ru,然后看看rails项目的根目录下config.ru里是如何写的</p>
+
+<p>```ruby
+#引用了config下面的 enviroment.rb 
+require ::File.expand_path(‘../config/environment’,  <strong>FILE</strong>)</p>
+
+<h1 id="railsstudyrailsrun-application">RailsStudy是我的rails的项目名称，这里的工作就是run 这个Application</h1>
+<p>run RailsStudy::Application
+```
+我们的Rails代码就是在这一步开始被调用到的  </p>
+
+<p>下面来看看 <code>config/application.rb</code> 这个文件</p>
+
+<p>```ruby
+require File.expand_path(‘../boot’, <strong>FILE</strong>)</p>
+
+<p>require ‘rails/all’</p>
+
+<p>if defined?(Bundler)
+  # If you precompile assets before deploying to production, use this line
+  Bundler.require(*Rails.groups(:assets =&gt; %w(development test)))
+  # If you want your assets lazily compiled in production, use this line
+  # Bundler.require(:default, :assets, Rails.env)
+end</p>
+
+<p>module RailsStudy
+  class Application &lt; Rails::Application
+    # Settings in config/environments/* take precedence over those specified here.
+    # Application configuration should go into files in config/initializers
+    # – all .rb files in that directory are automatically loaded.</p>
+
+<pre><code># Custom directories with classes and modules you want to be autoloadable.
+# config.autoload_paths += %W(#{config.root}/extras)
+
+# Only load the plugins named here, in the order given (default is alphabetical).
+# :all can be used as a placeholder for all plugins not explicitly named.
+# config.plugins = [ :exception_notification, :ssl_requirement, :all ]
+
+# Activate observers that should always be running.
+# config.active_record.observers = :cacher, :garbage_collector, :forum_observer
+
+# Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
+# Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
+# config.time_zone = 'Central Time (US &amp; Canada)'
+
+# The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
+# config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+config.i18n.default_locale = "zh-CN"
+
+# Configure the default encoding used in templates for Ruby 1.9.
+config.encoding = "utf-8"
+
+# Configure sensitive parameters which will be filtered from the log file.
+config.filter_parameters += [:password]
+
+# Enable escaping HTML in JSON.
+config.active_support.escape_html_entities_in_json = true
+
+# Use SQL instead of Active Record's schema dumper when creating the database.
+# This is necessary if your schema can't be completely dumped by the schema dumper,
+# like if you have constraints or database-specific column types
+# config.active_record.schema_format = :sql
+
+# Enforce whitelist mode for mass assignment.
+# This will create an empty whitelist of attributes available for mass-assignment for all models
+# in your app. As such, your models will need to explicitly whitelist or blacklist accessible
+# parameters by using an attr_accessible or attr_protected declaration.
+config.active_record.whitelist_attributes = true
+
+# Enable the asset pipeline
+config.assets.enabled = true
+
+# Version of your assets, change this if you want to expire all your assets
+config.assets.version = '1.0'   end end ``` 这是一个默认的application文件，基本没有修改里面的内容. 在rails项目里application文件的作用主要是做一些初始化的设置，比如时区，i18n等等。
+</code></pre>
+
+<p><code>RailsStudy::Application</code> 类是继承自 <code>Rails::Application</code>,然后我们去看看这个文件在哪里</p>
+
+<h2 id="railtieslibrailsapplicationrb">railties/lib/rails/application.rb</h2>
+
+<p>application文件里做了详细的介绍 Application的功能：</p>
+
+<ul>
+  <li>
+    <p>Initialization:<br />
+ Rails::Application负责执行所有的railties,engines,plugin的 initializer, 并且也执行
+ bootstrap initializer 和 finishing initializer</p>
+  </li>
+  <li>
+    <p>Configureation:<br />
+负责设置App的config，其中包含了 Rails::Engine和Rails::Railtie的config</p>
+  </li>
+  <li>
+    <p>Routes:<br />
+负责管理routes,当文件改变的时候reload所有的routes</p>
+  </li>
+  <li>
+    <p>Middlewares:<br />
+ 负责构建middlewares的堆栈</p>
+  </li>
+  <li>
+    <p>Booting process:<br />
+负责按照启动顺序启动和执行程序，大致程序如下</p>
+    <ol>
+      <li>require “config/boot.rb” to setup load paths</li>
+      <li>require railties and engines</li>
+      <li>Define Rails.application as “class MyApp::Application &lt; Rails::Application”</li>
+      <li>Run config.before_configuration callbacks</li>
+      <li>Load config/environments/ENV.rb</li>
+      <li>Run config.before_initialize callbacks</li>
+      <li>Run Railtie#initializer defined by railties, engines and application.</li>
+      <li>One by one, each engine sets up its load paths, routes and runs its config/initializers/* files.</li>
+      <li>Custom Railtie#initializers added by railties, engines and applications are executed</li>
+      <li>Build the middleware stack and run to_prepare callbacks</li>
+      <li>Run config.before_eager_load and eager_load if cache classes is true</li>
+      <li>Run config.after_initialize callbacks</li>
+    </ol>
+  </li>
+</ul>
+
+<p>这里先介绍一下application的功能，到最后我们再去看代码，接下来先看看Railtie。  </p>
+
+<h2 id="railtieslibrailsrailtierb">railties/lib/rails/railtie.rb</h2>
+
+<p>Rails::Application &lt; Rails::Engine &lt; Rails::Railtie  </p>
+
+<p>Railties 是rails framework的核心，用来提供各种回调方法以及扩展，或者修改初始化的process. 实际上每个rails组件(ActionMailer,Action Controller)都是一个railtie, 每个组件都有自己的初始化代码，这样rails就不用去专门把初始化工作都自己来做，只要在正确的时候调用各组件的初始化代码就可以了。</p>
+
+<p>Railtie的代码其实很短，只有100多行，类中一开始就引用了下面几个模块：</p>
+
+<p>```ruby
+autoload :Configurable,  “rails/railtie/configurable”
+autoload :Configuration, “rails/railtie/configuration”</p>
+
+<p>include Initializable
+```</p>
+
+<h4 id="configurable--configuration">Configurable &amp; Configuration</h4>
+<p>rails/railtie/configurable 中的类方法moudule中定义了 instance方法，并且将 @instance的config 方法代理给了include自己的类，</p>
+
+<p>```ruby
+module Rails
+  class Railtie
+    module Configurable
+      extend ActiveSupport::Concern</p>
+
+<pre><code>  module ClassMethods
+      
+    delegate :config, :to =&gt; :instance
+
+    def inherited(base)
+      raise "You cannot inherit from a #{self.superclass.name} child"
+    end
+
+    def instance
+      @instance ||= new
+    end
+
+    ...
+  end
+end   end end ```
+</code></pre>
+
+<p>这里的@instance有可能是Railtie，Engine,Application类的实例，他们都有自己的config方法实现,方法里基本上都是生成了自己的Configuration实现，这些Configuration类也是依次的继承关系:
+<code>Application::Configuration &lt; Engine::Configuration &lt; Railtie::Configuration</code></p>
+
+<h4 id="initializable">Initializable</h4>
+
+<p>railties/lib/rails/rails/initializable.rb 中定义了Module Rails::Initializable, 所有include了该Module的类都拥有了 <code>initializer</code>,<code>initializers</code>,<code>initializers_chain</code> 等类方法，<code>initializer</code> 方法帮助类可以定义一个或多个自己的 initializer, 并且通过<code>initializers</code>,<code>initializers_chain</code>来获取他们。</p>
+
+<p>比如用来加载i18n的本地化文件路径:</p>
+
+<p><code>ruby
+initializer :add_locales do
+  config.i18n.railties_load_path.concat(paths["config/locales"].existent)
+end
+</code></p>
+
+<p><code>ruby
+def initializer(name, opts = {}, &amp;blk)
+        raise ArgumentError, "A block must be passed when defining an initializer" unless blk
+        opts[:after] ||= initializers.last.name unless initializers.empty? || initializers.find { |i| i.name == opts[:before] }
+        initializers &lt;&lt; Initializer.new(name, nil, opts, &amp;blk)
+end
+</code></p>
+
+<p>在方法中会生成一个<code>Initializer</code>的实例，然后加入到<code>@initializers</code>变量中，最后会在Application类中的initialize!方法中会被执行。</p>
+
+<h2 id="railtieslibrailsenginerb">railties/lib/rails/engine.rb</h2>
+
+<p>Rails::Engine用来生成一个简单的Rails应用的子集，打包成通用的程序供不同的Rails项目使用。
+从Rails 3.0开始Rails应用就是一个Engine, 实际上Application类是继承自Engine类的。</p>
+
+<p>我们写的Gem包也可以是一个Engine应用，里面可以包含自己的controller,model,view文件，文件结构也可以和rails的文件结构一样，这样的构架很方便做一些通用的功能包，为减少重复代码提供了极大的方便。Engine本身还是有很多内容可以说的，关于如何应用他可以看看这个教程：<a href="http://guides.rubyonrails.org/engines.html">Getting Started with Engines</a>。</p>
+
+<p>再回过头来看代码，首先 Engine类是继承于 Railtie 的，也就是拥有了Railtie类的基本功能，但同时Engine类也扩展了自己的configuration类，这里主要为一个Engine定义了他的文件结构：</p>
+
+<p>railties/lib/rails/engine/configuration.rb</p>
+
+<p><code>ruby
+      def paths
+        @paths ||= begin
+          paths = Rails::Paths::Root.new(@root)
+          paths.add "app",                 :eager_load =&gt; true, :glob =&gt; "*"
+          paths.add "app/assets",          :glob =&gt; "*"
+          paths.add "app/controllers",     :eager_load =&gt; true
+          paths.add "app/helpers",         :eager_load =&gt; true
+          paths.add "app/models",          :eager_load =&gt; true
+          paths.add "app/mailers",         :eager_load =&gt; true
+          paths.add "app/views"
+          paths.add "lib",                 :load_path =&gt; true
+          paths.add "lib/assets",          :glob =&gt; "*"
+          paths.add "lib/tasks",           :glob =&gt; "**/*.rake"
+          paths.add "config"
+          paths.add "config/environments", :glob =&gt; "#{Rails.env}.rb"
+          paths.add "config/initializers", :glob =&gt; "**/*.rb"
+          paths.add "config/locales",      :glob =&gt; "*.{rb,yml}"
+          paths.add "config/routes",       :with =&gt; "config/routes.rb"
+          paths.add "db"
+          paths.add "db/migrate"
+          paths.add "db/seeds",            :with =&gt; "db/seeds.rb"
+          paths.add "vendor",              :load_path =&gt; true
+          paths.add "vendor/assets",       :glob =&gt; "*"
+          paths.add "vendor/plugins"
+          paths
+        end
+      end
+</code></p>
+
+<p>railties/lib/rails/engine/railties.rb</p>
+
+<p>Engine的Railties类是用来获取相关的railties，如self.railies方法可以获得当前环境下所有
+继承了<code>::Rails::Railtie</code> 的类的实例, self.engines则可以得到所有继承<code>::Rails::Engine</code>
+的实例。</p>
+
+<p>回到engine.rb, 这里定义了很多initializer,大部分的initializer是用来查看并加载所需要的文件用的。</p>
+
+<p><code>
+set_autoload_paths #设置需要自动load的文件路径
+add_routing_paths #如果routes文件存在则load相关文件
+add_locales  #如果本地化文件存在则load相关文件
+load_config_initializers #如果有initializer文件存在则load相关文件
+</code></p>
+
+<h2 id="railtieslibrailsapplicationrb-1">railties/lib/rails/application.rb</h2>
+
+<p>了解完Engine后再来看看Application的代码, 首先是</p>
+
+<p>```ruby
+class Application &lt; Engine
+    autoload :Bootstrap,      ‘rails/application/bootstrap’
+    autoload :Configuration,  ‘rails/application/configuration’
+    autoload :Finisher,       ‘rails/application/finisher’
+    autoload :Railties,       ‘rails/application/railties’
+    autoload :RoutesReloader, ‘rails/application/routes_reloader’</p>
+
+<pre><code>... end     ```
+</code></pre>
+
+<p>rails/application/bootstrap 定义启动是最开始需要加载的initializers,比如加载Logger,加载ActiveSupport的所有功能。</p>
+
+<p>rails/application/configuration 是继承于 ::Rails::Engine::Configuration，这里他提供了一个Rails Application所需要的更多config options:</p>
+
+<p>```ruby
+module Rails
+  class Application
+    class Configuration &lt; ::Rails::Engine::Configuration
+      attr_accessor :allow_concurrency, :asset_host, :asset_path, :assets,
+                    :cache_classes, :cache_store, :consider_all_requests_local,
+                    :dependency_loading, :exceptions_app, :file_watcher, :filter_parameters,
+                    :force_ssl, :helpers_paths, :logger, :log_tags, :preload_frameworks,
+                    :railties_order, :relative_url_root, :reload_plugins, :secret_token,
+                    :serve_static_assets, :ssl_options, :static_cache_control, :session_options,
+                    :time_zone, :reload_classes_only_on_change, :whiny_nils</p>
+
+<p>…
+end
+```</p>
+
+<p>更多的paths:</p>
+
+<p>```ruby
+ def paths
+        @paths ||= begin
+          paths = super
+          paths.add “config/database”,    :with =&gt; “config/database.yml”
+          paths.add “config/environment”, :with =&gt; “config/environment.rb”
+          paths.add “lib/templates”
+          paths.add “log”,                :with =&gt; “log/#{Rails.env}.log”
+          paths.add “public”
+          paths.add “public/javascripts”
+          paths.add “public/stylesheets”
+          paths.add “tmp”
+          paths
+        end
+      end</p>
+
+<p>```</p>
+
+<p>rails/application/finisher.rb 用来定义在启动完成前需要加载的initializers
+rails/application/railties.rb 用来获得所有的railties，包括engines,plugins,railties。
+rails/application/routes_reloader.rb 用来提供检测文件改动和reload routes的功能。</p>
+
+<p>initialize!方法在每个Rails项目的config/enviroment.rb中被调用到，这时会真正的执行所有定义好
+的initializers</p>
+
+<p><code>ruby
+def initialize!(group=:default) #:nodoc:
+    raise "Application has been already initialized." if @initialized
+    run_initializers(group, self)
+    @initialized = true
+    self
+end
+</code></p>
+
+<p>每一个initializer最后在 Rails::Initializable::Initializer类的run方法中被执行到：</p>
+
+<p><code>ruby
+def run(*args)
+    @context.instance_exec(*args, &amp;block)
+end
+</code></p>
+
+<p>default_middleware_stack方法为rails程序加载默认的middleware, 该方法在Engine类的<code>app</code>方法中被调用到。</p>
+
+<p>```ruby</p>
+
+<p>def default_middleware_stack
+      ActionDispatch::MiddlewareStack.new.tap do |middleware|
+        if rack_cache = config.action_controller.perform_caching &amp;&amp; config.action_dispatch.rack_cache
+          require “action_dispatch/http/rack_cache”
+          middleware.use ::Rack::Cache, rack_cache
+        end</p>
+
+<pre><code>    if config.force_ssl
+      require "rack/ssl"
+      middleware.use ::Rack::SSL, config.ssl_options
+    end
+
+    if config.serve_static_assets
+      middleware.use ::ActionDispatch::Static, paths["public"].first, config.static_cache_control
+    end
+
+    middleware.use ::Rack::Lock unless config.allow_concurrency
+    middleware.use ::Rack::Runtime
+    middleware.use ::Rack::MethodOverride
+    middleware.use ::ActionDispatch::RequestId
+    middleware.use ::Rails::Rack::Logger, config.log_tags # must come after Rack::MethodOverride to properly log overridden methods
+    middleware.use ::ActionDispatch::ShowExceptions, config.exceptions_app || ActionDispatch::PublicExceptions.new(Rails.public_path)
+    middleware.use ::ActionDispatch::DebugExceptions
+    middleware.use ::ActionDispatch::RemoteIp, config.action_dispatch.ip_spoofing_check, config.action_dispatch.trusted_proxies
+
+    if config.action_dispatch.x_sendfile_header.present?
+      middleware.use ::Rack::Sendfile, config.action_dispatch.x_sendfile_header
+    end
+
+    unless config.cache_classes
+      app = self
+      middleware.use ::ActionDispatch::Reloader, lambda { app.reload_dependencies? }
+    end
+
+    middleware.use ::ActionDispatch::Callbacks
+    middleware.use ::ActionDispatch::Cookies
+
+    if config.session_store
+      if config.force_ssl &amp;&amp; !config.session_options.key?(:secure)
+        config.session_options[:secure] = true
+      end
+      middleware.use config.session_store, config.session_options
+      middleware.use ::ActionDispatch::Flash
+    end
+
+    middleware.use ::ActionDispatch::ParamsParser
+    middleware.use ::ActionDispatch::Head
+    middleware.use ::Rack::ConditionalGet
+    middleware.use ::Rack::ETag, "no-cache"
+
+    if config.action_dispatch.best_standards_support
+      middleware.use ::ActionDispatch::BestStandardsSupport, config.action_dispatch.best_standards_support
+    end
+  end
+end
+</code></pre>
+
+<p>```</p>
+
+<p>嗯，基本上就是这回所有的内容了，总结一下： Railtie为所有rails组件提供了和Rails整合的接口，使他们可以定义自己的初始化内容，可以有自己的配置。 Engine继承于Railtie, 提供了一个功能最小化的Rails文档结构，Application继承于Engine, 在Engine的基础上定义了一个完整Rails所需要的Initializers和middleware,同时在启动时负责加载Rails程序中其他组件的所有Initializers。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Rails 源码学习 2 (Rack and Webrick)]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/09/09/reading-rails-2/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/09/09/reading-rails-2/"/>
     <updated>2012-09-09T21:33:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/09/09/reading-rails-2</id>
+    <id>http://jonnyzheng.github.io/blog/2012/09/09/reading-rails-2</id>
     <content type="html"><![CDATA[<h3 id="rack">先来一个rack程序的简单例子</h3>
 
 <p>```ruby
@@ -265,9 +689,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[carrierwave uploader 中传递变量]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/08/31/carrierwave-pass-params/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/08/31/carrierwave-pass-params/"/>
     <updated>2012-08-31T16:29:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/08/31/carrierwave-pass-params</id>
+    <id>http://jonnyzheng.github.io/blog/2012/08/31/carrierwave-pass-params</id>
     <content type="html"><![CDATA[<p>在carrierwave uploader中经常会用到version的功能，一般我们的写法都是在里面写死process的一些参数，比如</p>
 
 <p><code>ruby
@@ -326,9 +750,9 @@ end</p>
   
   <entry>
     <title type="html"><![CDATA[Rails 源码学习 1 (Rails 的初始化过程) ]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/07/15/reading-rails-1/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/07/15/reading-rails-1/"/>
     <updated>2012-07-15T15:27:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/07/15/reading-rails-1</id>
+    <id>http://jonnyzheng.github.io/blog/2012/07/15/reading-rails-1</id>
     <content type="html"><![CDATA[<h2 id="rails-bin-">rails bin 文件</h2>
 <p>在rails 项目的目录里运行命令就会看到rails命令的路径<code>/usr/bin/rails</code>，其实是一个ruby文件，可以用编辑器打开看看：</p>
 

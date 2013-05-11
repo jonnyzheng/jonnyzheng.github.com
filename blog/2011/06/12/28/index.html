@@ -19,7 +19,7 @@ select * from &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://jonnyzheng.github.com/blog/2011/06/12/28/">
+  <link rel="canonical" href="http://jonnyzheng.github.io/blog/2011/06/12/28/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -87,7 +87,7 @@ select * from &hellip;">
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:jonnyzheng.github.com" />
+    <input type="hidden" name="q" value="site:jonnyzheng.github.io" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -144,8 +144,7 @@ select * from &hellip;">
 
 <p>于是做了个测试，user 表录入 100万的数据，同时建立 user_category 表，每个user有 3 个分类，那么category表里有300万条记录。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>[]</span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
@@ -153,15 +152,14 @@ select * from &hellip;">
 <span class="line-number">6</span>
 <span class="line-number">7</span>
 <span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">user_category</span><span class="o">`</span> <span class="p">(</span>
-</span><span class="line"> <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span><span class="p">,</span>
-</span><span class="line"> <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
-</span><span class="line"> <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="k">NULL</span><span class="p">,</span>
-</span><span class="line"> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
-</span><span class="line"> <span class="k">KEY</span> <span class="o">`</span><span class="n">category_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">category_id</span><span class="o">`</span><span class="p">),</span>
-</span><span class="line"> <span class="k">KEY</span> <span class="o">`</span><span class="n">user_id</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">tax_id</span><span class="o">`</span><span class="p">)</span>
-</span><span class="line"><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="n">AUTO_INCREMENT</span><span class="o">=</span><span class="mi">1</span> <span class="k">DEFAULT</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+</pre></td><td class="code"><pre><code class=""><span class="line">CREATE TABLE `user_category` (
+</span><span class="line"> `id` int(11) NOT NULL AUTO_INCREMENT,
+</span><span class="line"> `user_id` int(11) DEFAULT NULL,
+</span><span class="line"> `category_id` int(11) DEFAULT NULL,
+</span><span class="line"> PRIMARY KEY (`id`),
+</span><span class="line"> KEY `category_id` (`category_id`),
+</span><span class="line"> KEY `user_id` (`tax_id`)
+</span><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>现在比较一下在百万级的数据量上使用 join 链接外键查询和find_in_set查询的性能</p>
 
@@ -205,12 +203,6 @@ select * from &hellip;">
 <time datetime="2011-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2011</time>
       
 
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/mysql/'>Mysql</a>
-  
-</span>
-
 
     </p>
     
@@ -230,6 +222,12 @@ select * from &hellip;">
   </footer>
 </article>
 
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
 </div>
 
 <aside class="sidebar">
@@ -237,6 +235,10 @@ select * from &hellip;">
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/09/09/reading-rails-2/">Rails 源码学习 2 (Rack and Webrick)</a>
@@ -274,15 +276,8 @@ select * from &hellip;">
         <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2011/09/10/linode--he--amazon-ec2--guo-nei-fang-wen-su-du-de-bi-jiao/">linode 和 Amazon EC2 国内访问速度的比较</a>
-      </li>
-    
   </ul>
 </section>
-
-
-
 
 
 
@@ -293,12 +288,28 @@ select * from &hellip;">
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - Jonny -
+  Copyright &copy; 2013 - Jonny -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
 </footer>
   
+
+<script type="text/javascript">
+      var disqus_shortname = 'jonnyzhengblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jonnyzheng.github.io/blog/2011/06/12/28/';
+        var disqus_url = 'http://jonnyzheng.github.io/blog/2011/06/12/28/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
 
 
 

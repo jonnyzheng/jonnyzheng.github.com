@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 杂货铺 | Jonny Zheng]]></title>
-  <link href="http://jonnyzheng.github.com/blog/categories/杂货铺/atom.xml" rel="self"/>
-  <link href="http://jonnyzheng.github.com/"/>
-  <updated>2012-09-09T22:47:26+08:00</updated>
-  <id>http://jonnyzheng.github.com/</id>
+  <link href="http://jonnyzheng.github.io/blog/categories/za-huo-pu/atom.xml" rel="self"/>
+  <link href="http://jonnyzheng.github.io/"/>
+  <updated>2013-05-11T17:16:46+08:00</updated>
+  <id>http://jonnyzheng.github.io/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
     <email><![CDATA[mars131@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Sublime 下配置vim模式]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/"/>
     <updated>2012-03-12T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi</id>
+    <id>http://jonnyzheng.github.io/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi</id>
     <content type="html"><![CDATA[<p>最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。</p>
 
 <p>sublime支持文本编辑使用 vim 模式，vim 快捷键编辑文本还是挺快的，两个编辑器融合一下也挺好，选择Preferences-&gt;Settings- Default, 在文本的最下面有一行 
@@ -38,9 +38,9 @@
   
   <entry>
     <title type="html"><![CDATA[关于Jquery offset().top 在IE和Firefox下行为不一致的问题]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/"/>
+    <link href="http://jonnyzheng.github.io/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/"/>
     <updated>2012-03-02T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti</id>
+    <id>http://jonnyzheng.github.io/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti</id>
     <content type="html"><![CDATA[<p>项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。</p>
 
 <p>于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。调试了一会貌似不是我代码的原因，于是到JSTree的源码里看看，结果看到下面这一句，他计算的事件点击在页面的position要在node的li高度范围内，这个不知道为啥要这样做，很是奇怪，但是这就是为什么在iframe里会出怪问题的原因。</p>
@@ -83,9 +83,9 @@
   
   <entry>
     <title type="html"><![CDATA[Git Rebase 后本地commit记录丢失]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/"/>
+    <link href="http://jonnyzheng.github.io/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi/"/>
     <updated>2011-08-31T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi</id>
+    <id>http://jonnyzheng.github.io/blog/2011/08/31/git-rebase--hou-ben-di-commit-ji-lu-diu-shi</id>
     <content type="html"><![CDATA[<p>今天下班前要代码要上测试环境，和另外两个同事一起merge代码，等我merge的时候我发现pull不到更新，于是问他俩，他们竟然都签入到了master里去了，邮件里写的很清楚要签入到分支的，两个人一个都没看邮件，当时不hold住就要吐血了。</p>
 
 <p>OK,  反正可以用rebase,  于是用TortoiseGit的rebase功能把他们在master上的代码merge到当前分支上来，一切搞定后提交测试，结果他俩的代码都正确了，我之前写的功能没有了，再看看代码今天写的东西都没有了，shit, 看来真是hold不住了。</p>
@@ -158,9 +158,9 @@
   
   <entry>
     <title type="html"><![CDATA[windows下为TortoiseGit生成密钥]]></title>
-    <link href="http://jonnyzheng.github.com/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao/"/>
+    <link href="http://jonnyzheng.github.io/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao/"/>
     <updated>2011-06-29T00:00:00+08:00</updated>
-    <id>http://jonnyzheng.github.com/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao</id>
+    <id>http://jonnyzheng.github.io/blog/2011/06/29/windows--wei-tortoisegit-sheng-cheng-mi-yao</id>
     <content type="html"><![CDATA[<p>使用TortoiseGit 的时候如果进行远程提交的话使用putty密钥会比较方便，记录一下生成密钥的步骤。</p>
 
 <ol>
