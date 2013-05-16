@@ -4,7 +4,7 @@
   <title><![CDATA[Jonny Zheng]]></title>
   <link href="http://jonnyzheng.github.io/atom.xml" rel="self"/>
   <link href="http://jonnyzheng.github.io/"/>
-  <updated>2013-05-11T17:16:46+08:00</updated>
+  <updated>2013-05-16T23:04:20+08:00</updated>
   <id>http://jonnyzheng.github.io/</id>
   <author>
     <name><![CDATA[Jonny]]></name>
@@ -12,6 +12,100 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rails源码学习(active_support:lazy_load_hooks)]]></title>
+    <link href="http://jonnyzheng.github.io/blog/2013/05/15/active-support-lazy-load-hooks/"/>
+    <updated>2013-05-15T23:42:00+08:00</updated>
+    <id>http://jonnyzheng.github.io/blog/2013/05/15/active-support-lazy-load-hooks</id>
+    <content type="html"><![CDATA[<p>在rails的initialize代码中经常能看到方法 <code>ActiveSupport.on_load</code>，这个代码是起什么用的引起了我很大的好奇，于是看了看源码，觉得这个功能还是挺好玩而且有用的。</p>
+
+<p><code>ActiveSupport.on_load</code>方法为rails提供了一种叫做 lazy_load_hooks的功能，这个功能可以使很多组件在被用到时才被加载，而不是启动即全部加载，这样大大加快了rails app 的启动速度。</p>
+
+<p>lazy_load_hooks的代码很短，只有不到30行，文件名: <code>activesupport-3.2.x/lib/active_suport/lazy_load_hooks.rb</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+</span><span class="line">  <span class="vi">@load_hooks</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span> <span class="p">}</span>
+</span><span class="line">  <span class="vi">@loaded</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">on_load</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@loaded</span><span class="o">[</span><span class="nb">name</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">base</span><span class="o">|</span>
+</span><span class="line">      <span class="n">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">    <span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">block</span><span class="p">,</span> <span class="n">options</span><span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:yield</span><span class="o">]</span>
+</span><span class="line">      <span class="n">block</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">base</span><span class="o">.</span><span class="n">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run_load_hooks</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="no">Object</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@loaded</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="n">base</span>
+</span><span class="line">    <span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">hook</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
+</span><span class="line">      <span class="n">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>代码中会初始化两个Hash变量 <code>@load_hooks</code>和 <code>@loaded</code>, <code>@load_hooks</code>用来存放还没有被执行的blocks, @loaded用来存放已经被加载的载体类。</p>
+
+<p>让我们看看一个ActiveRecord的例子来了解一下lazy_load_hooks的使用方法，在<code>activerecord-3.2.x/lib/active_record/railtie.rb</code>文件中有很多的initializer块，这些内容在rails启动的时候都会被调用到，像下面这个加载logger的：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">initializer</span> <span class="s2">&quot;active_record.logger&quot;</span> <span class="k">do</span>
+</span><span class="line">    <span class="no">ActiveSupport</span><span class="o">.</span><span class="n">on_load</span><span class="p">(</span><span class="ss">:active_record</span><span class="p">)</span> <span class="p">{</span> <span class="nb">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">||=</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">logger</span> <span class="p">}</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这时候 <code>ActiveSupport.run_load_hooks</code>还没有执行，所以 on_load方法中<code>@loaded[:active_record]</code>是空的，里面的each循环不会执行，执行到的是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">block</span><span class="p">,</span> <span class="n">options</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>把block放进<code>@load_hooks[:active_record]</code>里面去，所以在railtie里的所有on_load的block都先被存放了起来。</p>
+
+<p>最后的执行是在<code>activerecord-3.2.x/lib/active_record/base.rb</code>文件中，代码的最下面执行到了<code>run_load_hooks</code>方法，</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">ActiveSupport</span><span class="o">.</span><span class="n">run_load_hooks</span><span class="p">(</span><span class="ss">:active_record</span><span class="p">,</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>当加载ActiveRecord::Base执行到该方法，并且把<code>ActiveRecord::Base</code>作为载体类传了进去。所以在ActiveRecord::Base被加载的时候所有的lazy_load block才会被执行到，同样的其他模块中的railite里也有很多lazy_load block，他们都是在需要的时候才被执行，这样又节省运行资源，又节省启动时间，我们自己写Gem的时候也可以用上啦。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rails 源码学习3 (Application,Engine,Railtie)]]></title>

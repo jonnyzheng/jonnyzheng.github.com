@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Rails源码学习(active_support:lazy_load_hooks) - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="在rails的initialize代码中经常能看到方法 ActiveSupport.on_load，这个代码是起什么用的引起了我很大的好奇，于是看了看源码，觉得这个功能还是挺好玩而且有用的。 ActiveSupport.on_load方法为rails提供了一种叫做 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.io/blog/2013/05/15/active-support-lazy-load-hooks/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Rails源码学习(active_support:lazy_load_hooks)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T23:42:00+08:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>在rails的initialize代码中经常能看到方法 <code>ActiveSupport.on_load</code>，这个代码是起什么用的引起了我很大的好奇，于是看了看源码，觉得这个功能还是挺好玩而且有用的。</p>
+
+<p><code>ActiveSupport.on_load</code>方法为rails提供了一种叫做 lazy_load_hooks的功能，这个功能可以使很多组件在被用到时才被加载，而不是启动即全部加载，这样大大加快了rails app 的启动速度。</p>
+
+<p>lazy_load_hooks的代码很短，只有不到30行，文件名: <code>activesupport-3.2.x/lib/active_suport/lazy_load_hooks.rb</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+</span><span class="line">  <span class="vi">@load_hooks</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span> <span class="p">}</span>
+</span><span class="line">  <span class="vi">@loaded</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">on_load</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@loaded</span><span class="o">[</span><span class="nb">name</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">base</span><span class="o">|</span>
+</span><span class="line">      <span class="n">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">    <span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">block</span><span class="p">,</span> <span class="n">options</span><span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:yield</span><span class="o">]</span>
+</span><span class="line">      <span class="n">block</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">base</span><span class="o">.</span><span class="n">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run_load_hooks</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="no">Object</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@loaded</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="n">base</span>
+</span><span class="line">    <span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">hook</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
+</span><span class="line">      <span class="n">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>代码中会初始化两个Hash变量 <code>@load_hooks</code>和 <code>@loaded</code>, <code>@load_hooks</code>用来存放还没有被执行的blocks, @loaded用来存放已经被加载的载体类。</p>
+
+<p>让我们看看一个ActiveRecord的例子来了解一下lazy_load_hooks的使用方法，在<code>activerecord-3.2.x/lib/active_record/railtie.rb</code>文件中有很多的initializer块，这些内容在rails启动的时候都会被调用到，像下面这个加载logger的：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">initializer</span> <span class="s2">&quot;active_record.logger&quot;</span> <span class="k">do</span>
+</span><span class="line">    <span class="no">ActiveSupport</span><span class="o">.</span><span class="n">on_load</span><span class="p">(</span><span class="ss">:active_record</span><span class="p">)</span> <span class="p">{</span> <span class="nb">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">||=</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">logger</span> <span class="p">}</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这时候 <code>ActiveSupport.run_load_hooks</code>还没有执行，所以 on_load方法中<code>@loaded[:active_record]</code>是空的，里面的each循环不会执行，执行到的是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">block</span><span class="p">,</span> <span class="n">options</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>把block放进<code>@load_hooks[:active_record]</code>里面去，所以在railtie里的所有on_load的block都先被存放了起来。</p>
+
+<p>最后的执行是在<code>activerecord-3.2.x/lib/active_record/base.rb</code>文件中，代码的最下面执行到了<code>run_load_hooks</code>方法，</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">ActiveSupport</span><span class="o">.</span><span class="n">run_load_hooks</span><span class="p">(</span><span class="ss">:active_record</span><span class="p">,</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>当加载ActiveRecord::Base执行到该方法，并且把<code>ActiveRecord::Base</code>作为载体类传了进去。所以在ActiveRecord::Base被加载的时候所有的lazy_load block才会被执行到，同样的其他模块中的railite里也有很多lazy_load block，他们都是在需要的时候才被执行，这样又节省运行资源，又节省启动时间，我们自己写Gem的时候也可以用上啦。</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T23:42:00+08:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rails/'>rails</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/29/reading-rails-3/" title="Previous Post: Rails 源码学习3 (Application,Engine,Railtie)">&laquo; Rails 源码学习3 (Application,Engine,Railtie)</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/05/15/active-support-lazy-load-hooks/">Rails源码学习(active_support:lazy_load_hooks)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/09/reading-rails-2/">Rails 源码学习 2 (Rack and Webrick)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/31/carrierwave-pass-params/">carrierwave uploader 中传递变量</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/15/reading-rails-1/">Rails 源码学习 1 (Rails 的初始化过程) </a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jonnyzhengblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jonnyzheng.github.io/blog/2013/05/15/active-support-lazy-load-hooks/';
+        var disqus_url = 'http://jonnyzheng.github.io/blog/2013/05/15/active-support-lazy-load-hooks/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

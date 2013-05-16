@@ -9,7 +9,7 @@
   <meta name="author" content="Jonny">
 
   
-  <meta name="description" content="在第一篇Rails 的初始化过程里讲到rails的启动命令是在 railties/lib/rails/commands/server.rb 里执行的，其实这里的server类是继承自Rack::Server的，从这里就可以看出rails是一个rack app，rack 连接了Rails应用和 &hellip;">
+  <meta name="description" content="在rails的initialize代码中经常能看到方法 ActiveSupport.on_load，这个代码是起什么用的引起了我很大的好奇，于是看了看源码，觉得这个功能还是挺好玩而且有用的。 ActiveSupport.on_load方法为rails提供了一种叫做 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,6 +102,127 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/05/15/active-support-lazy-load-hooks/">Rails源码学习(active_support:lazy_load_hooks)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-15T23:42:00+08:00" pubdate data-updated="true">May 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在rails的initialize代码中经常能看到方法 <code>ActiveSupport.on_load</code>，这个代码是起什么用的引起了我很大的好奇，于是看了看源码，觉得这个功能还是挺好玩而且有用的。</p>
+
+<p><code>ActiveSupport.on_load</code>方法为rails提供了一种叫做 lazy_load_hooks的功能，这个功能可以使很多组件在被用到时才被加载，而不是启动即全部加载，这样大大加快了rails app 的启动速度。</p>
+
+<p>lazy_load_hooks的代码很短，只有不到30行，文件名: <code>activesupport-3.2.x/lib/active_suport/lazy_load_hooks.rb</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">ActiveSupport</span>
+</span><span class="line">  <span class="vi">@load_hooks</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span> <span class="p">}</span>
+</span><span class="line">  <span class="vi">@loaded</span> <span class="o">=</span> <span class="no">Hash</span><span class="o">.</span><span class="n">new</span> <span class="p">{</span> <span class="o">|</span><span class="n">h</span><span class="p">,</span><span class="n">k</span><span class="o">|</span> <span class="n">h</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="o">[]</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">on_load</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@loaded</span><span class="o">[</span><span class="nb">name</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">base</span><span class="o">|</span>
+</span><span class="line">      <span class="n">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">    <span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">block</span><span class="p">,</span> <span class="n">options</span><span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:yield</span><span class="o">]</span>
+</span><span class="line">      <span class="n">block</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">base</span><span class="o">.</span><span class="n">instance_eval</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run_load_hooks</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="no">Object</span><span class="p">)</span>
+</span><span class="line">    <span class="vi">@loaded</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="n">base</span>
+</span><span class="line">    <span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">hook</span><span class="p">,</span> <span class="n">options</span><span class="o">|</span>
+</span><span class="line">      <span class="n">execute_hook</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>代码中会初始化两个Hash变量 <code>@load_hooks</code>和 <code>@loaded</code>, <code>@load_hooks</code>用来存放还没有被执行的blocks, @loaded用来存放已经被加载的载体类。</p>
+
+<p>让我们看看一个ActiveRecord的例子来了解一下lazy_load_hooks的使用方法，在<code>activerecord-3.2.x/lib/active_record/railtie.rb</code>文件中有很多的initializer块，这些内容在rails启动的时候都会被调用到，像下面这个加载logger的：</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">initializer</span> <span class="s2">&quot;active_record.logger&quot;</span> <span class="k">do</span>
+</span><span class="line">    <span class="no">ActiveSupport</span><span class="o">.</span><span class="n">on_load</span><span class="p">(</span><span class="ss">:active_record</span><span class="p">)</span> <span class="p">{</span> <span class="nb">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">||=</span> <span class="o">::</span><span class="no">Rails</span><span class="o">.</span><span class="n">logger</span> <span class="p">}</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这时候 <code>ActiveSupport.run_load_hooks</code>还没有执行，所以 on_load方法中<code>@loaded[:active_record]</code>是空的，里面的each循环不会执行，执行到的是</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="vi">@load_hooks</span><span class="o">[</span><span class="nb">name</span><span class="o">]</span> <span class="o">&lt;&lt;</span> <span class="o">[</span><span class="n">block</span><span class="p">,</span> <span class="n">options</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>把block放进<code>@load_hooks[:active_record]</code>里面去，所以在railtie里的所有on_load的block都先被存放了起来。</p>
+
+<p>最后的执行是在<code>activerecord-3.2.x/lib/active_record/base.rb</code>文件中，代码的最下面执行到了<code>run_load_hooks</code>方法，</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">ActiveSupport</span><span class="o">.</span><span class="n">run_load_hooks</span><span class="p">(</span><span class="ss">:active_record</span><span class="p">,</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>当加载ActiveRecord::Base执行到该方法，并且把<code>ActiveRecord::Base</code>作为载体类传了进去。所以在ActiveRecord::Base被加载的时候所有的lazy_load block才会被执行到，同样的其他模块中的railite里也有很多lazy_load block，他们都是在需要的时候才被执行，这样又节省运行资源，又节省启动时间，我们自己写Gem的时候也可以用上啦。</p>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -2336,67 +2457,6 @@ rails/application/routes_reloader.rb 用来提供检测文件改动和reload rou
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">Vim Window下显示换行符的问题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-11-18T00:00:00+08:00" pubdate data-updated="true">Nov 18<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p> </p>
-
-<p>关于回车与换行</p>
-
-<p>很久以前，老式的电传打字机使用两个字符来另起新行。一个字符把滑动架移回首位 (称为回车，<cr>，ASCII码为0D)，另一个字符把纸上移一行 (称为换行, <lf>，ASCII码为0A)。当计算机问世以后，存储器曾经非常昂贵。有些人就认定没必要用两个字符来表示行尾。UNIX 开发者决定他们可以用 一个字符来表示行尾，Linux沿袭Unix，也是<lf>。Apple 开发者规定了用<cr>。开发 MS-DOS以及Windows 的那些家伙则决定沿用老式的<cr><lf>。</lf></cr></cr></lf></lf></cr></p>
-
-<p>因为MS-DOS及Windows是回车＋换行来表示换行，因此在Linux下用Vim查看在Windows下用VC写的代码，行尾后的 <code>^M</code> 符号，表示的是符。</p>
-
-<p>在Vim中解决这个问题，很简单，在Vim中利用替换功能就可以将 <code>^M</code> 都干掉，键入如下替换命令行：</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">:%s/^M//g</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>注意：上述命令行中的  <code>^M</code> 符，不是 <code>^</code> 再加上 <code>M</code>，而是由 <code>Ctrl+v</code> 、<code>Ctrl+M</code> 键生成的</p>
-
-<p>vim 自动识别换行符</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">set fileformats=unix,dox,mac</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>设置保存格式</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">set fileformat=unix</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p> </p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -2410,6 +2470,10 @@ rails/application/routes_reloader.rb 用来提供检测文件改动和reload rou
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/05/15/active-support-lazy-load-hooks/">Rails源码学习(active_support:lazy_load_hooks)</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a>
@@ -2445,10 +2509,6 @@ rails/application/routes_reloader.rb 用来提供检测文件改动和reload rou
     
       <li class="post">
         <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2011/11/18/vim-window-xia-xian-shi-huan-xing-fu-de-wen-ti/">vim window下显示换行符的问题</a>
       </li>
     
   </ul>
