@@ -9,7 +9,7 @@
   <meta name="author" content="Jonny">
 
   
-  <meta name="description" content="  关于回车与换行 很久以前，老式的电传打字机使用两个字符来另起新行。一个字符把滑动架移回首位 (称为回车，，ASCII码为0D)，另一个字符把纸上移一行 (称为换行, ，ASCII码为0A)。当计算机问世以后，存储器曾经非常昂贵。有些人就认定没必要用两个字符来表示行尾。UNIX &hellip;">
+  <meta name="description" content="很多本地化生活网站的一个基本功能就是根据用户的IP地址判断所在的城市，基本的逻辑就是有一个ip库，根据ip库里的记录找到用户ip地址所在的范围。 IP库没有太多选择，我在网上找到的一个http://www.maxmind.com/app/ip-location， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,6 +102,127 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-06T00:00:00+08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>很多本地化生活网站的一个基本功能就是根据用户的IP地址判断所在的城市，基本的逻辑就是有一个ip库，根据ip库里的记录找到用户ip地址所在的范围。</p>
+
+<p>IP库没有太多选择，我在网上找到的一个<a href="http://www.maxmind.com/app/ip-location">http://www.maxmind.com/app/ip-location</a>， 这个网站本身提供收费的IP库和免费的IP库，收费的库在准确率上要稍微高一些，拿城市的库做一个例子，左边是免费版，右边是收费版：</p>
+
+<table><tbody>
+<tr>
+<th />
+<td>GeoLite City</td>
+<td><span style="color: #000000;"><a href="http://www.maxmind.com/app/city"><span style="color: #000000;">GeoIP City</span></a></span></td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Free</td>
+<td>$370 initial, $90 per month updates</td>
+</tr>
+<tr>
+<td>Coverage</td>
+<td>Worldwide</td>
+<td>Worldwide</td>
+</tr>
+<tr>
+<td>Accuracy</td>
+<td>Over 99.5% on a country level and 79% on a city level for the US within a 25 mile radius. <a href="http://www.maxmind.com/app/geolite_city_accuracy">More details</a>
+</td>
+<td>Over 99.8% on a country level and 83% on a city level for the US within a 25 mile radius. <a href="http://www.maxmind.com/app/city_accuracy">More details</a>
+</td>
+</tr>
+<tr>
+<td>Redistribution</td>
+<td>Free, subject to GPL/LGPL for APIs and <a href="http://geolite.maxmind.com/download/geoip/database/LICENSE.txt">database license</a>. <a href="http://www.maxmind.com/app/builder">Commercial redistribution licenses</a> are available</td>
+<td>Please contact us.</td>
+</tr>
+<tr>
+<td>Updates</td>
+<td>Updated monthly, at the beginning of each month</td>
+<td>Updated monthly. For binary format, weekly updates, automated updates available by using geoipupdate program included with<a href="http://www.maxmind.com/app/c">C API</a>
+</td>
+</tr>
+</tbody></table>
+
+<p>ruby 的使用很简单，有一个gem库: <a href="http://geoip.rubyforge.org/">http://geoip.rubyforge.org/</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">require ‘geoip’
+</span><span class="line">c = GeoIP.new(‘GeoIP.dat’).country(‘www.nokia.com’)
+</span><span class="line">=&gt; [“www.nokia.com”, “147.243.3.83”, 69, “FI”, “FIN”, “Finland”, “EU”]
+</span><span class="line">c.country_code3
+</span><span class="line">=&gt; “FIN”
+</span><span class="line">c.to_hash
+</span><span class="line">=&gt; {:country_code3=&gt;"FIN", :country_name=&gt;"Finland", :continent_code=&gt;"EU",
+</span><span class="line">:request=&gt;"www.nokia.com", :country_code=&gt;69, :country_code2=&gt;"FI", :ip=&gt;"147.243.3.83"}
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">c = GeoIP.new(‘GeoLiteCity.dat’).city(‘github.com’)
+</span><span class="line">=&gt; [“github.com”, “207.97.227.239”, “US”, “USA”, “United States”, “NA”, “CA”,
+</span><span class="line">“San Francisco”, “94110”, 37.7484, -122.4156, 807, 415, “America/Los_Angeles”]
+</span><span class="line">&gt;&gt; c.longitude
+</span><span class="line">=&gt; -122.4156
+</span><span class="line">&gt;&gt; c.timezone
+</span><span class="line">=&gt; “America/Los_Angeles”
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">c = GeoIP.new(‘GeoIPASNum.dat’).asn(“www.fsb.ru”)
+</span><span class="line">=&gt; [“AS8342”, “RTComm.RU Autonomous System”]</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>我下了一个citylite的免费库，只试了我自己的地址，判断是准确的，还没有找其他的地方进行测试,79%的准确率不高也不低，用作预判断还是可以接受的。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -644,6 +765,10 @@ RSAAuthentication yes
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/06/12/mars-geo/">MarsGeo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/05/15/active-support-lazy-load-hooks/">Rails源码学习(active_support:lazy_load_hooks)</a>
       </li>
     
@@ -677,10 +802,6 @@ RSAAuthentication yes
     
       <li class="post">
         <a href="/blog/2012/03/02/guan-yu-jquery-offset-top--zai-ie-he-firefox-xia-xing-wei-bu-yi-zhi-de-wen-ti/">关于Jquery offset().top 在IE和Firefox下行为不一致的问题</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/01/06/gen-ju-ip-huo-de-cheng-shi-ming-cheng--ruby--ban/">根据IP获得城市名称 Ruby 版</a>
       </li>
     
   </ul>
