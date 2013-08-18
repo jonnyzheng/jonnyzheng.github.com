@@ -1,0 +1,574 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>IOS PrettyKit 简介 - Jonny Zheng</title>
+  <meta name="author" content="Jonny">
+
+  
+  <meta name="description" content="最近发现一个很不错的ios lib PrettyKit, PrettyKit库提供了一套可以自定义Grouped TableCell, NavigationBar, Tab Bar 的子类，它为我们提供了更多的可定义属性，比如边框，阴影，圆角，渐变等等，大大方便了开发，节省了我不少的时间。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://jonnyzheng.github.io/blog/2013/08/18/ios-pretty-kit-intro/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Jonny Zheng" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+	  MathJax.Hub.Config({
+		      tex2jax: {
+			            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+				          processEscapes: true
+					      
+		      }
+		        
+	  });
+  </script>
+
+  <script type="text/x-mathjax-config">
+	      MathJax.Hub.Config({
+		            tex2jax: {
+				            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+					          
+			    }
+			        
+	      });
+      </script>
+
+      <script type="text/x-mathjax-config">
+	          MathJax.Hub.Queue(function() {
+			          var all = MathJax.Hub.getAllJax(), i;
+				          for(i=0; i < all.length; i += 1) {
+						              all[i].SourceElement().parentNode.className += ' has-jax';
+							              
+					  }
+					      
+	  });
+  </script>
+
+  <script type="text/javascript"
+	     src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Jonny Zheng</a></h1>
+  
+    <h2>I'm an idealist, not perfectionist</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:jonnyzheng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/about">About</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">IOS PrettyKit 简介</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-18T20:49:00+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>最近发现一个很不错的ios lib  <a href="https://github.com/vicpenap/PrettyKit">PrettyKit</a>, PrettyKit库提供了一套可以自定义Grouped TableCell, NavigationBar, Tab Bar 的子类，它为我们提供了更多的可定义属性，比如边框，阴影，圆角，渐变等等，大大方便了开发，节省了我不少的时间。</p>
+
+<p>用户设置是每个app都用到的功能，一般我们都会用group table来做，不过要想做的漂亮还是要花一番心思，下面我们通过使用PrettyKity来示范一下做个设置界面</p>
+
+<h2 id="section">新建项目，引用文件</h2>
+
+<p>首先新建一个项目，clone PrettyKit的代码，把PrettyKit文件夹拷贝到新项目的Vendor目录下，然后在项目中添加进来。</p>
+
+<p>这里要注意一点，PrettyKit的代码不要用原来的那个，原来的作者已经很久没有维护过项目了，如果你是使用ARC的，请使用我从其他分支整合过来的版本，这个版本是支持ARC的，而且修复了一些小Bug: <a href="https://github.com/jonnyzheng/PrettyKit">https://github.com/jonnyzheng/PrettyKit</a></p>
+
+<h2 id="prettytableviewcell-">PrettyTableViewCell 的使用</h2>
+
+<p>如果是做类似设置界面这样的静态Table,我们可以通过在StoryBoard的界面里设置选择 Cell的 Class是PrettyTableViewCell就直接设定好了Table Cell的类，如果没有用StoryBoard或者是需要动态的生成的Cell, 那么我们就需要自己写代码了，下面介绍一下如何自己写：</p>
+
+<h4 id="table-view">首先给Table View换个好看点的颜色</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="objective-c"><span class="line"><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">viewDidLoad</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="p">[</span><span class="n">super</span> <span class="n">viewDidLoad</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">    <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">tableView</span> <span class="nl">setBackgroundView:</span><span class="nb">nil</span><span class="p">];</span>
+</span><span class="line">    <span class="n">self</span><span class="p">.</span><span class="n">tableView</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="nl">colorWithRed:</span><span class="mf">248.0</span><span class="o">/</span><span class="mf">255.0</span>
+</span><span class="line">                                                     <span class="nl">green:</span><span class="mf">244.0</span><span class="o">/</span><span class="mf">255.0</span>
+</span><span class="line">                                                      <span class="nl">blue:</span><span class="mf">239.0</span><span class="o">/</span><span class="mf">255.0</span> <span class="nl">alpha:</span><span class="mf">1.0</span><span class="p">];</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="groupgroup">自己定义一下有多少个Group,每个Group有多少行</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="objective-c"><span class="line"><span class="k">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">numberOfSectionsInTableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="c1">// Return the number of sections.</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">4</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">-</span> <span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">numberOfRowsInSection:</span><span class="p">(</span><span class="n">NSInteger</span><span class="p">)</span><span class="nv">section</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="c1">// Return the number of rows in the section.</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">section</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">section</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">section</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="mi">4</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">section</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="cell">为每行生成Cell</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+</pre></td><td class="code"><pre><code class="objective-c"><span class="line"><span class="k">-</span> <span class="p">(</span><span class="n">UITableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nf">tableView:</span><span class="p">(</span><span class="n">UITableView</span> <span class="o">*</span><span class="p">)</span><span class="nv">tableView</span> <span class="nf">cellForRowAtIndexPath:</span><span class="p">(</span><span class="n">NSIndexPath</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPath</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="k">static</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">CellIdentifier</span> <span class="o">=</span> <span class="s">@&quot;Cell&quot;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">PrettyTableViewCell</span> <span class="o">*</span><span class="n">cell</span> <span class="o">=</span> <span class="p">[</span><span class="n">tableView</span> <span class="nl">dequeueReusableCellWithIdentifier:</span><span class="n">CellIdentifier</span><span class="p">];</span>
+</span><span class="line">    <span class="k">if</span> <span class="p">(</span><span class="n">cell</span> <span class="o">==</span> <span class="nb">nil</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">        <span class="n">cell</span> <span class="o">=</span> <span class="p">[[</span><span class="n">PrettyTableViewCell</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithStyle:</span><span class="n">UITableViewCellStyleDefault</span>
+</span><span class="line">                                          <span class="nl">reuseIdentifier:</span><span class="n">CellIdentifier</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">switch</span> <span class="p">(</span><span class="n">indexPath</span><span class="p">.</span><span class="n">section</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">            <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+</span><span class="line">                <span class="k">switch</span> <span class="p">(</span><span class="n">indexPath</span><span class="p">.</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">                    <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+</span><span class="line">                        <span class="p">[</span><span class="n">self</span> <span class="nl">prepareNameCell:</span><span class="n">cell</span><span class="p">];</span>
+</span><span class="line">                        <span class="k">break</span><span class="p">;</span>
+</span><span class="line">                <span class="p">}</span>
+</span><span class="line">                <span class="k">break</span><span class="p">;</span>
+</span><span class="line">            <span class="k">default</span><span class="o">:</span>
+</span><span class="line">                <span class="k">break</span><span class="p">;</span>
+</span><span class="line">        <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">        <span class="c1">//设置圆角弧度和阴影</span>
+</span><span class="line">        <span class="n">cell</span><span class="p">.</span><span class="n">cornerRadius</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span><span class="line">        <span class="n">cell</span><span class="p">.</span><span class="n">shadowOpacity</span> <span class="o">=</span> <span class="mf">0.07</span><span class="p">;</span>
+</span><span class="line">        <span class="n">cell</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="n">whiteColor</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">        <span class="c1">//设置选择时候的颜色</span>
+</span><span class="line">        <span class="n">cell</span><span class="p">.</span><span class="n">selectionGradientStartColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="nl">colorWithRed:</span><span class="mf">248.0</span><span class="o">/</span><span class="mf">255.0</span>
+</span><span class="line">                                                           <span class="nl">green:</span><span class="mf">244.0</span><span class="o">/</span><span class="mf">255.0</span>
+</span><span class="line">                                                            <span class="nl">blue:</span><span class="mf">239.0</span><span class="o">/</span><span class="mf">255.0</span> <span class="nl">alpha:</span><span class="mi">1</span><span class="p">];</span>
+</span><span class="line">        <span class="n">cell</span><span class="p">.</span><span class="n">SelectionGradientEndColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="nl">colorWithRed:</span><span class="mf">248.0</span><span class="o">/</span><span class="mf">255.0</span>
+</span><span class="line">                                                         <span class="nl">green:</span><span class="mf">244.0</span><span class="o">/</span><span class="mf">255.0</span>
+</span><span class="line">                                                          <span class="nl">blue:</span><span class="mf">239.0</span><span class="o">/</span><span class="mf">255.0</span> <span class="nl">alpha:</span><span class="mi">1</span><span class="p">];</span>
+</span><span class="line">        <span class="c1">// Configure the cell...</span>
+</span><span class="line">        <span class="p">[</span><span class="n">cell</span> <span class="nl">prepareForTableView:</span><span class="n">tableView</span> <span class="nl">indexPath:</span><span class="n">indexPath</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">cell</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="cell-1">自定义Cell</h4>
+
+<p>上面的代码里除了第一行其他都是生成的空Cell, 现在来看看如何实现第一行的<code>prepareNameCell</code>方法</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+</pre></td><td class="code"><pre><code class="objective-c"><span class="line"><span class="k">-</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="nf">prepareNameCell:</span><span class="p">(</span><span class="n">PrettyTableViewCell</span> <span class="o">*</span><span class="p">)</span><span class="nv">cell</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="n">cell</span><span class="p">.</span><span class="n">accessoryType</span> <span class="o">=</span> <span class="n">UITableViewCellAccessoryDisclosureIndicator</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">UILabel</span> <span class="o">*</span><span class="n">nameLable</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">)];</span>
+</span><span class="line">    <span class="n">nameLable</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">@&quot;用户名:&quot;</span><span class="p">;</span>
+</span><span class="line">    <span class="n">nameLable</span><span class="p">.</span><span class="n">font</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">fontWithName:</span><span class="s">@&quot;Helvetica-Bold&quot;</span> <span class="nl">size:</span><span class="mf">15.0</span><span class="p">];</span>
+</span><span class="line">    <span class="n">nameLable</span><span class="p">.</span><span class="n">translatesAutoresizingMaskIntoConstraints</span> <span class="o">=</span> <span class="n">NO</span><span class="p">;</span>
+</span><span class="line">    <span class="p">[</span><span class="n">cell</span><span class="p">.</span><span class="n">contentView</span> <span class="nl">addSubview:</span><span class="n">nameLable</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="n">UILabel</span> <span class="o">*</span><span class="n">name</span> <span class="o">=</span> <span class="p">[[</span><span class="n">UILabel</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithFrame:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">)];</span>
+</span><span class="line">    <span class="n">name</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">@&quot;jonny&quot;</span><span class="p">;</span>
+</span><span class="line">    <span class="n">name</span><span class="p">.</span><span class="n">translatesAutoresizingMaskIntoConstraints</span> <span class="o">=</span> <span class="n">NO</span><span class="p">;</span>
+</span><span class="line">    <span class="n">name</span><span class="p">.</span><span class="n">font</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIFont</span> <span class="nl">fontWithName:</span><span class="s">@&quot;Helvetica&quot;</span> <span class="nl">size:</span><span class="mf">15.0</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">    <span class="p">[</span><span class="n">cell</span><span class="p">.</span><span class="n">contentView</span> <span class="nl">addSubview:</span><span class="n">name</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="n">NSLayoutConstraint</span> <span class="o">*</span><span class="n">constraintXName</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSLayoutConstraint</span> <span class="nl">constraintWithItem:</span><span class="n">name</span>
+</span><span class="line">                                                                        <span class="nl">attribute:</span><span class="n">NSLayoutAttributeLeading</span>
+</span><span class="line">                                                                        <span class="nl">relatedBy:</span><span class="n">NSLayoutRelationEqual</span>
+</span><span class="line">                                                                           <span class="nl">toItem:</span> <span class="n">nameLable</span>
+</span><span class="line">                                                                        <span class="nl">attribute:</span><span class="n">NSLayoutAttributeTrailing</span>
+</span><span class="line">                                                                       <span class="nl">multiplier:</span><span class="mf">1.0</span> <span class="nl">constant:</span><span class="mf">5.0</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="n">NSLayoutConstraint</span> <span class="o">*</span><span class="n">constraintYName</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSLayoutConstraint</span> <span class="nl">constraintWithItem:</span><span class="n">name</span>
+</span><span class="line">                                                                        <span class="nl">attribute:</span><span class="n">NSLayoutAttributeCenterY</span>
+</span><span class="line">                                                                        <span class="nl">relatedBy:</span><span class="n">NSLayoutRelationEqual</span>
+</span><span class="line">                                                                           <span class="nl">toItem:</span> <span class="n">cell</span><span class="p">.</span><span class="n">contentView</span>
+</span><span class="line">                                                                        <span class="nl">attribute:</span><span class="n">NSLayoutAttributeCenterY</span>
+</span><span class="line">                                                                       <span class="nl">multiplier:</span><span class="mf">1.0</span> <span class="nl">constant:</span><span class="mi">0</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">NSLayoutConstraint</span> <span class="o">*</span><span class="n">constraintX</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSLayoutConstraint</span> <span class="nl">constraintWithItem:</span><span class="n">nameLable</span>
+</span><span class="line">                                                                   <span class="nl">attribute:</span><span class="n">NSLayoutAttributeLeading</span>
+</span><span class="line">                                                                   <span class="nl">relatedBy:</span><span class="n">NSLayoutRelationEqual</span>
+</span><span class="line">                                                                      <span class="nl">toItem:</span> <span class="n">cell</span><span class="p">.</span><span class="n">contentView</span>
+</span><span class="line">                                                                   <span class="nl">attribute:</span><span class="n">NSLayoutAttributeLeading</span>
+</span><span class="line">                                                                  <span class="nl">multiplier:</span><span class="mf">1.0</span> <span class="nl">constant:</span><span class="mf">10.0f</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="n">NSLayoutConstraint</span> <span class="o">*</span><span class="n">constraintY</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSLayoutConstraint</span> <span class="nl">constraintWithItem:</span><span class="n">nameLable</span>
+</span><span class="line">                                                                   <span class="nl">attribute:</span><span class="n">NSLayoutAttributeCenterY</span>
+</span><span class="line">                                                                   <span class="nl">relatedBy:</span><span class="n">NSLayoutRelationEqual</span>
+</span><span class="line">                                                                      <span class="nl">toItem:</span> <span class="n">cell</span><span class="p">.</span><span class="n">contentView</span>
+</span><span class="line">                                                                   <span class="nl">attribute:</span><span class="n">NSLayoutAttributeCenterY</span>
+</span><span class="line">                                                                  <span class="nl">multiplier:</span><span class="mf">1.0</span> <span class="nl">constant:</span><span class="mi">0</span><span class="p">];</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">    <span class="p">[</span><span class="n">cell</span><span class="p">.</span><span class="n">contentView</span> <span class="nl">addConstraints:</span> <span class="p">[[</span><span class="n">NSArray</span> <span class="n">alloc</span><span class="p">]</span> <span class="nl">initWithObjects:</span>
+</span><span class="line">                                       <span class="n">constraintXName</span><span class="p">,</span><span class="n">constraintYName</span><span class="p">,</span><span class="n">constraintX</span><span class="p">,</span><span class="n">constraintY</span><span class="p">,</span><span class="nb">nil</span><span class="p">]];</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>上面的方法中用到了不少NSLayoutConstraint的布局方式，如果不需要也可以用绝对定位。</p>
+
+<p>Ok, 一个简单的设置页就做好了，完整代码请看这里<a href="https://gist.github.com/jonnyzheng/6261968">https://gist.github.com/jonnyzheng/6261968</a> 。 当然PrettyKit里还有一个比较全的样例项目，大家也可以参考，玩的开心~~~</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Jonny</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-18T20:49:00+08:00" pubdate data-updated="true">Aug 18<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios/'>ios</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/30/elixir-intro/" title="Previous Post: Elixir语言特性简介">&laquo; Elixir语言特性简介</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/18/ios-pretty-kit-intro/">IOS PrettyKit 简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/30/elixir-intro/">Elixir语言特性简介</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/12/mars-geo/">MarsGeo</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/05/15/active-support-lazy-load-hooks/">Rails源码学习(active_support:lazy_load_hooks)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/29/reading-rails-3/">Rails 源码学习3 (Application,Engine,Railtie)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/09/09/reading-rails-2/">Rails 源码学习 2 (Rack and Webrick)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/08/31/carrierwave-pass-params/">carrierwave uploader 中传递变量</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/15/reading-rails-1/">Rails 源码学习 1 (Rails 的初始化过程) </a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/28/java-fan-xing-jian-ming-jiao-cheng/">Java泛型简明教程</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Jonny -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'jonnyzhengblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://jonnyzheng.github.io/blog/2013/08/18/ios-pretty-kit-intro/';
+        var disqus_url = 'http://jonnyzheng.github.io/blog/2013/08/18/ios-pretty-kit-intro/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

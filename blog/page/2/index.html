@@ -9,7 +9,7 @@
   <meta name="author" content="Jonny">
 
   
-  <meta name="description" content="项目中用到了JSTree,原先一个页面里包含了很多的tab标签，而且每个tab标签内功能都很多，用到了大量的js代码，后来我们决定把tab里的内容分成不同的page，然后用iframe调用。 于是奇怪的问题出现了，在IE下面拖动滚动条后jstree的node怎么也点不了了，像事件丢失了一样。 &hellip;">
+  <meta name="description" content="最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。 sublime支持文本编辑使用 vim 模式，vim 快捷键编辑文本还是挺快的，两个编辑器融合一下也挺好，选择Preferences-&gt;Settings- Default, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -102,6 +102,58 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-12T00:00:00+08:00" pubdate data-updated="true">Mar 12<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近用上了sublime text2， 和textmate比界面要漂亮一些，而且几个平台下都有对应版本，比较统一。</p>
+
+<p>sublime支持文本编辑使用 vim 模式，vim 快捷键编辑文本还是挺快的，两个编辑器融合一下也挺好，选择Preferences-&gt;Settings- Default, 在文本的最下面有一行 </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">"ignored_packages": ["vintage"]</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>，这里sublime 默认去掉了vim的支持，我们只需要把”vintage”删掉就好了。</p>
+
+<p>再在编辑框里试试已经ok了，但是在vim里我都把ESC键映射到了’ii’上了： imap ‘ii’ <esc> ，这里并不支持imap。 不过我们可以在vintage 的package包里自己定义，我的机器是windows,默认packages都装在了 C:\Documents and Settings\zhengj1\Application Data\Sublime Text 2\Packages 目录下，找到Vintage\Default.sublime-keymap文件，用文本编辑器打开，加上下面的代码：</esc></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">"ignored_packages": ["vintage"]</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>这个keymap文件里可以定义自己习惯的快捷键方式，有兴趣的不妨研究研究。</p>
+
+<p>vintage这个插件并不支持command， 想要支持还需要下一个<a href="https://github.com/SublimeText/VintageEx" title="VintageEx">VintageEx </a>包，一些简单的命令就可以用了。&lt;/esc&gt;</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -730,91 +782,9 @@ RSAAuthentication yes
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/06/12/28/">关于 Find_in_set 的性能问题</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-12T00:00:00+08:00" pubdate data-updated="true">Jun 12<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>同事不少数据表设计的时候使用一个字段来存储多对多关系，比如 表 user中有一个字段叫 category, category存储的是 “1,3,9” 这样的类型的数据，实际上是category的id 用逗号分隔开来的。</p>
-
-<p>要查询一个用户属于id为2分类的用户可以这么写</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">select * from `user` where find_in_set('2',`user`.`category`)</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>具体find_in_set 的使用请参照手册</p>
-
-<p><a href="http://dev.mysql.com/doc/refman/5.1/en/string-functions.html#function_find-in-set">http://dev.mysql.com/doc/refman/5.1/en/string-functions.html#function_find-in-set</a></p>
-
-<p>虽然这样很好用，但问题是如果数据量大的情况下怎么办，性能会是问题么，手册上有说对find_in_set 做的优化，但在没有索引的情况下他的性能应该是个问题。</p>
-
-<p>于是做了个测试，user 表录入 100万的数据，同时建立 user_category 表，每个user有 3 个分类，那么category表里有300万条记录。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">CREATE TABLE `user_category` (
-</span><span class="line"> `id` int(11) NOT NULL AUTO_INCREMENT,
-</span><span class="line"> `user_id` int(11) DEFAULT NULL,
-</span><span class="line"> `category_id` int(11) DEFAULT NULL,
-</span><span class="line"> PRIMARY KEY (`id`),
-</span><span class="line"> KEY `category_id` (`category_id`),
-</span><span class="line"> KEY `user_id` (`tax_id`)
-</span><span class="line">) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>现在比较一下在百万级的数据量上使用 join 链接外键查询和find_in_set查询的性能</p>
-
-<h5 id="findinset-22">使用 find_in_set 查询，平均时间在2.2秒左右</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">SELECT SQL_NO_CACHE COUNT(*) FROM `user` WHERE FIND_IN_SET(65,category)</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h5 id="left-join--02">使用left join ， 使用了右表中的索引，平均时间在0.2秒左右</h5>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">SELECT SQL_NO_CACHE COUNT(DISTINCT(`user`.id)) FROM `user`
-</span><span class="line">LEFT JOIN `user_category` ON `user`.`id`= `user_category`.`user_id`
-</span><span class="line">WHERE `user_category`.`category_id`=75</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>所以在大数据量的情况下还是不适合用find_in_set, 不过有些表的数据可能永远就那么点数据，这个时候为了减少表数量，倒是可以用这样的方法做。</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -827,6 +797,10 @@ RSAAuthentication yes
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/18/ios-pretty-kit-intro/">IOS PrettyKit 简介</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/07/30/elixir-intro/">Elixir语言特性简介</a>
@@ -862,10 +836,6 @@ RSAAuthentication yes
     
       <li class="post">
         <a href="/blog/2012/03/20/37signals-chang-dao-ji-shi-jian-de-8-ge-li-nian/">37signals倡导及实践的8个理念</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/03/12/sublime--xia-pei-zhi-vim-mo-shi/">Sublime 下配置vim模式</a>
       </li>
     
   </ul>
