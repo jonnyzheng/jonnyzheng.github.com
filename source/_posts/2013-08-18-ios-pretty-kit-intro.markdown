@@ -1,0 +1,189 @@
+---
+layout: post
+title: "IOS PrettyKit 简介"
+date: 2013-08-18 20:49
+comments: true
+categories: ios
+---
+
+
+最近发现一个很不错的ios lib  [PrettyKit](https://github.com/vicpenap/PrettyKit), PrettyKit库提供了一套可以自定义Grouped TableCell, NavigationBar, Tab Bar 的子类，它为我们提供了更多的可定义属性，比如边框，阴影，圆角，渐变等等，大大方便了开发，节省了我不少的时间。
+
+用户设置是每个app都用到的功能，一般我们都会用group table来做，不过要想做的漂亮还是要花一番心思，下面我们通过使用PrettyKity来示范一下做个设置界面
+
+
+## 新建项目，引用文件
+
+首先新建一个项目，clone PrettyKit的代码，把PrettyKit文件夹拷贝到新项目的Vendor目录下，然后在项目中添加进来。
+
+这里要注意一点，PrettyKit的代码不要用原来的那个，原来的作者已经很久没有维护过项目了，如果你是使用ARC的，请使用我从其他分支整合过来的版本，这个版本是支持ARC的，而且修复了一些小Bug: [https://github.com/jonnyzheng/PrettyKit](https://github.com/jonnyzheng/PrettyKit)
+
+
+## PrettyTableViewCell 的使用
+
+如果是做类似设置界面这样的静态Table,我们可以通过在StoryBoard的界面里设置选择 Cell的 Class是PrettyTableViewCell就直接设定好了Table Cell的类，如果没有用StoryBoard或者是需要动态的生成的Cell, 那么我们就需要自己写代码了，下面介绍一下如何自己写：
+
+####首先给Table View换个好看点的颜色
+
+```objective-c
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    [self.tableView setBackgroundView:nil];
+    self.tableView.backgroundColor = [UIColor colorWithRed:248.0/255.0
+                                                     green:244.0/255.0
+                                                      blue:239.0/255.0 alpha:1.0];
+}
+
+```
+
+
+
+#### 自己定义一下有多少个Group,每个Group有多少行
+
+```
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return 4;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section.
+    if (section == 0) {
+        return 1;
+    }
+    if (section == 1) {
+        return 2;
+    }
+    if (section == 2) {
+        return 4;
+    }
+    
+    if (section == 3) {
+        return 1;
+    }
+    
+
+    return 0;
+}
+```
+
+
+#### 为每行生成Cell
+
+
+
+```
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    
+    PrettyTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[PrettyTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                          reuseIdentifier:CellIdentifier];
+        
+        switch (indexPath.section) {
+            case 0:
+                switch (indexPath.row) {
+                    case 0:
+                        [self prepareNameCell:cell];
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        //设置圆角弧度和阴影
+        cell.cornerRadius = 5;
+        cell.shadowOpacity = 0.07;
+        cell.backgroundColor = [UIColor whiteColor];
+        
+        //设置选择时候的颜色
+        cell.selectionGradientStartColor = [UIColor colorWithRed:248.0/255.0
+                                                           green:244.0/255.0
+                                                            blue:239.0/255.0 alpha:1];
+        cell.SelectionGradientEndColor = [UIColor colorWithRed:248.0/255.0
+                                                         green:244.0/255.0
+                                                          blue:239.0/255.0 alpha:1];
+        // Configure the cell...
+        [cell prepareForTableView:tableView indexPath:indexPath];
+        
+    }
+    return cell;
+
+}
+
+```
+
+
+#### 自定义Cell
+
+上面的代码里除了第一行其他都是生成的空Cell, 现在来看看如何实现第一行的`prepareNameCell`方法
+
+```
+-(void) prepareNameCell:(PrettyTableViewCell *)cell
+{
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    UILabel *nameLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0, 5.0, 100.0, 15.0)];
+    nameLable.text = @"用户名:";
+    nameLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0];
+    nameLable.translatesAutoresizingMaskIntoConstraints = NO;
+    [cell.contentView addSubview:nameLable];
+    
+
+    UILabel *name = [[UILabel alloc] initWithFrame:CGRectMake(5.0, 0.0, 100.0, 15.0)];
+    name.text = @"jonny";
+    name.translatesAutoresizingMaskIntoConstraints = NO;
+    name.font = [UIFont fontWithName:@"Helvetica" size:15.0];
+    
+    [cell.contentView addSubview:name];
+    
+    
+    NSLayoutConstraint *constraintXName = [NSLayoutConstraint constraintWithItem:name
+                                                                        attribute:NSLayoutAttributeLeading
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem: nameLable
+                                                                        attribute:NSLayoutAttributeTrailing
+                                                                       multiplier:1.0 constant:5.0];
+    
+    
+    NSLayoutConstraint *constraintYName = [NSLayoutConstraint constraintWithItem:name
+                                                                        attribute:NSLayoutAttributeCenterY
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem: cell.contentView
+                                                                        attribute:NSLayoutAttributeCenterY
+                                                                       multiplier:1.0 constant:0];
+    
+    NSLayoutConstraint *constraintX = [NSLayoutConstraint constraintWithItem:nameLable
+                                                                   attribute:NSLayoutAttributeLeading
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem: cell.contentView
+                                                                   attribute:NSLayoutAttributeLeading
+                                                                  multiplier:1.0 constant:10.0f];
+    
+    
+    NSLayoutConstraint *constraintY = [NSLayoutConstraint constraintWithItem:nameLable
+                                                                   attribute:NSLayoutAttributeCenterY
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem: cell.contentView
+                                                                   attribute:NSLayoutAttributeCenterY
+                                                                  multiplier:1.0 constant:0];
+    
+    
+    
+    [cell.contentView addConstraints: [[NSArray alloc] initWithObjects:
+                                       constraintXName,constraintYName,constraintX,constraintY,nil]];
+}
+
+```
+
+上面的方法中用到了不少NSLayoutConstraint的布局方式，如果不需要也可以用绝对定位。
+
+
+Ok, 一个简单的设置页就做好了，完整代码请看这里[https://gist.github.com/jonnyzheng/6261968](https://gist.github.com/jonnyzheng/6261968) 。 当然PrettyKit里还有一个比较全的样例项目，大家也可以参考，玩的开心~~~
